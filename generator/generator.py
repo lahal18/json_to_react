@@ -158,7 +158,7 @@ export default function {page_name}() {{
 
     page_file = os.path.join(PAGES_PATH, f"{page_name}.tsx")
 
-    with open(page_file, "w") as f:
+    with open(page_file, "w", encoding="utf-8") as f:
         f.write(page_code)
 
     print(f"Page generated: {page_name}")

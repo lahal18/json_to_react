@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Architect — Build Your Vision</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #0e0f11;
+            --surface: #16181c;
+            --surface2: #1d2026;
+            --border: #2a2d35;
+            --accent: #6ee7b7;
+            --accent-dim: rgba(110, 231, 183, 0.12);
+            --accent-glow: rgba(110, 231, 183, 0.25);
+            --text: #e8eaed;
+            --muted: #6b7280;
+            --user-bg: #1a2e2a;
+            --user-text: #d1fae5;
+            --radius: 18px;
+            --radius-sm: 10px;
+        }
+
+        html, body { height: 100%; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* HEADER */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 28px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface);
+            flex-shrink: 0;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--accent);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .logo h1 {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            color: var(--text);
+        }
+
+        .phase-badge {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--accent);
+            background: var(--accent-dim);
+            border: 1px solid rgba(110,231,183,0.2);
+            padding: 4px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.3px;
+        }
+
+        /* CHAT */
+        #chat-box {
+            flex: 1;
+            overflow-y: auto;
+            padding: 28px 0;
+            scroll-behavior: smooth;
+        }
+
+        #chat-box::-webkit-scrollbar { width: 4px; }
+        #chat-box::-webkit-scrollbar-track { background: transparent; }
+        #chat-box::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+        .chat-inner {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .msg {
+            max-width: 82%;
+            padding: 14px 18px;
+            border-radius: var(--radius);
+            line-height: 1.65;
+            font-size: 14.5px;
+            animation: fadeUp 0.3s ease;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .msg-bot {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-bottom-left-radius: 4px;
+            color: var(--text);
+            align-self: flex-start;
+        }
+
+        .msg-bot .prose p { margin-bottom: 8px; }
+        .msg-bot .prose ul { padding-left: 18px; margin-bottom: 8px; }
+        .msg-bot .prose li { margin-bottom: 4px; }
+        .msg-bot .prose strong { color: var(--accent); font-weight: 600; }
+
+        .msg-user {
+            background: var(--user-bg);
+            border: 1px solid rgba(110,231,183,0.15);
+            border-bottom-right-radius: 4px;
+            color: var(--user-text);
+            align-self: flex-end;
+        }
+
+        /* TYPING */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 14px 18px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-bottom-left-radius: 4px;
+            border-radius: var(--radius);
+            width: fit-content;
+            animation: fadeUp 0.3s ease;
+        }
+
+        .typing-dot {
+            width: 7px;
+            height: 7px;
+            background: var(--accent);
+            border-radius: 50%;
+            opacity: 0.4;
+            animation: pulse 1.2s ease infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes pulse {
+            0%, 60%, 100% { opacity: 0.4; transform: scale(1); }
+            30% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* INPUT */
+        #input-area {
+            flex-shrink: 0;
+            padding: 16px 20px 20px;
+            border-top: 1px solid var(--border);
+            background: var(--surface);
+        }
+
+        .input-inner {
+            max-width: 680px;
+            margin: 0 auto;
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        #user-input {
+            flex: 1;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 13px 18px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14.5px;
+            resize: none;
+            outline: none;
+            transition: border-color 0.2s;
+            min-height: 50px;
+            max-height: 120px;
+            line-height: 1.5;
+        }
+
+        #user-input:focus { border-color: var(--accent); }
+        #user-input::placeholder { color: var(--muted); }
+
+        #send-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            background: var(--accent);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: opacity 0.2s, transform 0.15s;
+            color: #0e0f11;
+        }
+
+        #send-btn:hover { opacity: 0.9; transform: scale(1.04); }
+        #send-btn:active { transform: scale(0.96); }
+
+        #send-btn svg { width: 20px; height: 20px; }
+
+        /* SUMMARY PANEL */
+        #summary-panel {
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #summary-panel.visible {
+            display: flex;
+            flex: 1;
+        }
+
+        .summary-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 32px 20px;
+        }
+
+        .summary-scroll::-webkit-scrollbar { width: 4px; }
+        .summary-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+        .summary-inner {
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .summary-icon {
+            width: 42px;
+            height: 42px;
+            background: var(--accent-dim);
+            border: 1px solid rgba(110,231,183,0.25);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .summary-title h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .summary-title p {
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .summary-card {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 22px 24px;
+            margin-bottom: 16px;
+        }
+
+        .summary-card .prose {
+            font-size: 14.5px;
+            line-height: 1.7;
+            color: #c8cdd5;
+        }
+
+        .summary-card .prose strong { color: var(--accent); font-weight: 600; }
+        .summary-card .prose p { margin-bottom: 8px; }
+        .summary-card .prose ul { padding-left: 20px; }
+        .summary-card .prose li { margin-bottom: 6px; }
+
+        .summary-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #0e0f11;
+            border: none;
+            padding: 13px 22px;
+            border-radius: 12px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: opacity 0.2s, transform 0.15s;
+        }
+
+        .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+        .btn-primary:active { transform: translateY(0); }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid var(--border);
+            padding: 13px 22px;
+            border-radius: 12px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.2s, border-color 0.2s;
+        }
+
+        .btn-ghost:hover { color: var(--text); border-color: #404550; }
+
+        /* JSON OUTPUT */
+        #json-section {
+            display: none;
+            margin-top: 24px;
+            animation: fadeUp 0.4s ease;
+        }
+
+        #json-section.visible { display: block; }
+
+        .json-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #1a1d22;
+            border: 1px solid var(--border);
+            border-bottom: none;
+            border-radius: 12px 12px 0 0;
+            padding: 10px 16px;
+        }
+
+        .json-filename {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'DM Mono', monospace;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .json-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+        }
+
+        #copy-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+            padding: 5px 12px;
+            border-radius: 7px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s, border-color 0.2s;
+        }
+
+        #copy-btn:hover { color: var(--text); border-color: #404550; }
+        #copy-btn.copied { color: var(--accent); border-color: rgba(110,231,183,0.3); }
+
+        #json-output {
+            background: #12141a;
+            border: 1px solid var(--border);
+            border-radius: 0 0 12px 12px;
+            padding: 20px;
+            font-family: 'DM Mono', monospace;
+            font-size: 12.5px;
+            color: #a3e7c5;
+            line-height: 1.7;
+            overflow-x: auto;
+            max-height: 380px;
+            overflow-y: auto;
+            white-space: pre;
+        }
+
+        #json-output::-webkit-scrollbar { width: 4px; height: 4px; }
+
+        .repaired-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            font-weight: 500;
+            color: #fbbf24;
+            background: rgba(251,191,36,0.1);
+            border: 1px solid rgba(251,191,36,0.2);
+            padding: 3px 9px;
+            border-radius: 20px;
+            margin-left: 8px;
+        }
+        #json-output::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+        /* THINKING PANEL */
+        #thinking-section {
+            display: none;
+            margin-top: 24px;
+        }
+
+        #thinking-section.visible { display: block; }
+
+        .thinking-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--muted);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .thinking-spinner {
+            width: 12px;
+            height: 12px;
+            border: 1.5px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        #think-box {
+            background: #12141a;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 16px;
+            font-family: 'DM Mono', monospace;
+            font-size: 11.5px;
+            color: #4b5563;
+            line-height: 1.7;
+            max-height: 140px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        #think-box::-webkit-scrollbar { width: 3px; }
+        #think-box::-webkit-scrollbar-thumb { background: var(--border); }
+
+        #think-box.done { color: #374151; opacity: 0.6; }
+
+        /* STATUS BAR */
+        .generating-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--accent);
+            padding: 12px 16px;
+            background: var(--accent-dim);
+            border: 1px solid rgba(110,231,183,0.15);
+            border-radius: 10px;
+            margin-bottom: 16px;
+        }
+
+        .generating-status.hidden { display: none; }
+
+        /* Assembly-line progress bar */
+        #progress-bar-wrap {
+            display: none;
+            margin-bottom: 16px;
+        }
+        #progress-bar-wrap.visible { display: block; }
+
+        .progress-steps-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+        .progress-steps-label span { color: var(--accent); font-weight: 600; }
+
+        .progress-track {
+            height: 4px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        .progress-current-label {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 6px;
+            min-height: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <div class="logo-icon">⬡</div>
+        <h1>AI Architect</h1>
+    </div>
+    <span class="phase-badge" id="phase-label">Phase 1 — Discovery</span>
+</header>
+
+<!-- CHAT VIEW -->
+<div id="chat-view" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+    <div id="chat-box">
+        <div class="chat-inner" id="chat-inner">
+            <div class="msg msg-bot">
+                <div class="prose">
+                    Hey there 👋 I'm your AI Architect.<br><br>
+                    Tell me — <strong>what kind of website</strong> are you looking to build? A portfolio, SaaS product, e-commerce store, landing page...?
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="input-area">
+        <div class="input-inner">
+            <textarea id="user-input" rows="1" placeholder="Describe your idea..." onkeydown="handleKey(event)"></textarea>
+            <button id="send-btn" onclick="sendMessage()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- SUMMARY VIEW -->
+<div id="summary-panel">
+    <div class="summary-scroll">
+        <div class="summary-inner">
+            <div class="summary-header">
+                <div class="summary-icon">✦</div>
+                <div class="summary-title">
+                    <h2>Requirements Summary</h2>
+                    <p>Review what I've gathered — edit or proceed to generate.</p>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="prose" id="summary-content"></div>
+            </div>
+
+            <div id="summary-actions" class="summary-actions">
+                <button class="btn-primary" onclick="startGeneration()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    Generate JSON Layout
+                </button>
+                <button class="btn-ghost" onclick="goBackToChat()">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    Edit / Add more
+                </button>
+            </div>
+
+            <!-- Generating Status -->
+            <div id="gen-status" class="generating-status hidden">
+                <div class="thinking-spinner"></div>
+                <span id="gen-status-text">Initializing architect...</span>
+            </div>
+
+            <!-- Assembly-line progress bar -->
+            <div id="progress-bar-wrap">
+                <div class="progress-steps-label">
+                    <span id="progress-step-text">Step 0</span>
+                    <span id="progress-pct-text">0%</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <div class="progress-current-label" id="progress-current-label"></div>
+            </div>
+
+            <!-- Thinking Box (shown during Nemotron reasoning phase) -->
+            <div id="thinking-section">
+                <div class="thinking-header">
+                    <div class="thinking-spinner" id="think-spinner"></div>
+                    <span>Reasoning through your layout...</span>
+                </div>
+                <div id="think-box"></div>
+            </div>
+
+            <!-- JSON Output -->
+            <div id="json-section">
+                <div class="json-header">
+                    <div class="json-filename">
+                        <span class="json-dot"></span>
+                        layout.json
+                    </div>
+                    <button id="copy-btn" onclick="copyJson()">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        Copy
+                    </button>
+                </div>
+                <pre id="json-output"></pre>
+                <div id="build-actions" style="margin-top: 24px; display: none; align-items: center; justify-content: space-between; background: var(--surface2); padding: 16px; border-radius: 12px; border: 1px solid var(--border);">
+    <div id="build-status" style="font-size: 14px; font-weight: 500; color: var(--accent);">
+        Ready to generate website files.
+    </div>
+    <button id="build-site-btn" class="btn-primary" onclick="triggerBuild()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0e0f11" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Build & Launch Site
+    </button>
+</div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    let chatHistory = [];
+    let finalJsonData = "";
+    const statusMessages = [
+        "Initializing architect...",
+        "Analyzing your requirements...",
+        "Designing component structure...",
+        "Building layout schema...",
+        "Finalizing JSON output..."
+    ];
+
+    // Auto-resize textarea
+    const textarea = document.getElementById('user-input');
+    textarea.addEventListener('input', () => {
+        textarea.style.height = 'auto';
+        textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+    });
+
+    function handleKey(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    }
+
+    function addMessage(sender, text) {
+        const chatInner = document.getElementById('chat-inner');
+        const div = document.createElement('div');
+
+        if (sender === 'user') {
+            div.className = 'msg msg-user';
+            div.innerText = text;
+        } else {
+            div.className = 'msg msg-bot';
+            const prose = document.createElement('div');
+            prose.className = 'prose';
+            prose.innerHTML = marked.parse(text);
+            div.appendChild(prose);
+        }
+
+        chatInner.appendChild(div);
+        document.getElementById('chat-box').scrollTop = 999999;
+    }
+
+    function showTyping() {
+        const chatInner = document.getElementById('chat-inner');
+        const div = document.createElement('div');
+        div.className = 'typing-indicator';
+        div.id = 'typing';
+        div.innerHTML = `<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>`;
+        chatInner.appendChild(div);
+        document.getElementById('chat-box').scrollTop = 999999;
+    }
+
+    function hideTyping() {
+        const t = document.getElementById('typing');
+        if (t) t.remove();
+    }
+
+    async function sendMessage() {
+        const input = document.getElementById('user-input');
+        const text = input.value.trim();
+        if (!text) return;
+
+        addMessage('user', text);
+        chatHistory.push({ role: 'user', content: text });
+        input.value = '';
+        input.style.height = 'auto';
+        showTyping();
+
+        try {
+            const res = await fetch('/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text, history: chatHistory })
+            });
+            const data = await res.json();
+            hideTyping();
+
+            let reply = data.reply;
+            chatHistory.push({ role: 'model', content: reply });
+
+            if (data.is_finished) {
+                const match = reply.match(/\[FINAL SUMMARY\]([\s\S]*?)\[\/FINAL SUMMARY\]/);
+                if (match) {
+                    showSummary(match[1].trim());
+                    return;
+                }
+            }
+            addMessage('bot', reply);
+        } catch (err) {
+            hideTyping();
+            addMessage('bot', 'Connection error. Please try again.');
+        }
+    }
+
+    function showSummary(summaryText) {
+        document.getElementById('summary-content').innerHTML = marked.parse(summaryText);
+        document.getElementById('chat-view').style.display = 'none';
+        const panel = document.getElementById('summary-panel');
+        panel.classList.add('visible');
+        document.getElementById('phase-label').innerText = 'Phase 2 — Review';
+    }
+
+    function goBackToChat() {
+        document.getElementById('summary-panel').classList.remove('visible');
+        document.getElementById('chat-view').style.display = 'flex';
+        document.getElementById('phase-label').innerText = 'Phase 1 — Discovery';
+        addMessage('bot', "What would you like to adjust or add?");
+        document.getElementById('user-input').focus();
+    }
+
+    async function startGeneration() {
+        document.getElementById('summary-actions').classList.add('hidden');
+        document.getElementById('phase-label').innerText = 'Phase 3 — Generating';
+
+        // Show progress bar, hide old spinner status
+        const progressWrap  = document.getElementById('progress-bar-wrap');
+        const progressFill  = document.getElementById('progress-fill');
+        const stepText      = document.getElementById('progress-step-text');
+        const pctText       = document.getElementById('progress-pct-text');
+        const currentLabel  = document.getElementById('progress-current-label');
+        progressWrap.classList.add('visible');
+
+        const genStatus     = document.getElementById('gen-status');
+        const genStatusText = document.getElementById('gen-status-text');
+
+        function updateProgress(step, total, label) {
+            const pct = total > 0 ? Math.round((step / total) * 100) : 0;
+            progressFill.style.width = pct + '%';
+            stepText.innerText = 'Step ' + step + ' of ' + total;
+            pctText.innerText  = pct + '%';
+            currentLabel.innerText = label || '';
+        }
+
+        try {
+            const res = await fetch('/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ history: chatHistory })
+            });
+
+            const reader  = res.body.getReader();
+            const decoder = new TextDecoder('utf-8');
+            let buffer    = '';
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                buffer += decoder.decode(value, { stream: true });
+                const parts = buffer.split('\n\n');
+                buffer = parts.pop();
+
+                for (const line of parts) {
+                    if (!line.startsWith('data: ')) continue;
+                    let payload;
+                    try { payload = JSON.parse(line.substring(6)); } catch { continue; }
+
+                    if (payload.type === 'progress') {
+                        // Live step-by-step progress bar
+                        updateProgress(payload.step, payload.total, payload.label);
+
+                    } else if (payload.type === 'done') {
+                        finalJsonData = payload.json_data;
+                        document.getElementById('build-actions').style.display = 'flex';
+
+                        // Fill bar to 100%
+                        updateProgress(payload.pages ? payload.pages.length + 1 : 1,
+                                       payload.pages ? payload.pages.length + 1 : 1,
+                                       'Assembly complete!');
+
+                        // Small delay so user sees 100% before it disappears
+                        await new Promise(r => setTimeout(r, 600));
+                        progressWrap.classList.remove('visible');
+
+                        // Auto-repaired badge
+                        if (payload.was_repaired) {
+                            const filenameEl = document.querySelector('.json-filename');
+                            if (filenameEl && !document.getElementById('repaired-badge')) {
+                                const badge = document.createElement('span');
+                                badge.id = 'repaired-badge';
+                                badge.className = 'repaired-badge';
+                                badge.innerHTML = '⚡ Auto-repaired';
+                                filenameEl.appendChild(badge);
+                            }
+                        }
+
+                        document.getElementById('json-output').innerText = finalJsonData;
+                        document.getElementById('json-section').classList.add('visible');
+                        document.getElementById('phase-label').innerText = 'Phase 3 — Complete ✓';
+                        document.getElementById('json-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                    } else if (payload.type === 'error') {
+                        progressWrap.classList.remove('visible');
+                        genStatus.style.background   = 'rgba(239,68,68,0.1)';
+                        genStatus.style.borderColor  = 'rgba(239,68,68,0.2)';
+                        genStatus.style.color        = '#f87171';
+                        genStatusText.innerText = '⚠ ' + payload.content;
+                        genStatus.classList.remove('hidden');
+                    }
+                }
+            }
+        } catch (err) {
+            progressWrap.classList.remove('visible');
+            genStatus.classList.remove('hidden');
+            genStatusText.innerText = '⚠ Failed to connect. Please retry.';
+        }
+    }
+
+    function copyJson() {
+        if (!finalJsonData) return;
+        navigator.clipboard.writeText(finalJsonData).then(() => {
+            const btn = document.getElementById('copy-btn');
+            btn.classList.add('copied');
+            btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Copied!`;
+            setTimeout(() => {
+                btn.classList.remove('copied');
+                btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy`;
+            }, 2500);
+        });
+    }
+    async function triggerBuild() {
+    const btn = document.getElementById('build-site-btn');
+    const status = document.getElementById('build-status');
+    
+    btn.disabled = true;
+    btn.style.opacity = '0.5';
+    btn.innerHTML = `<div class="thinking-spinner" style="border-top-color: #0e0f11;"></div> Building...`;
+    
+    status.style.color = 'var(--text)';
+    status.innerText = '🚀 Initiating pipeline...';
+
+    try {
+        const res = await fetch('/build', { method: 'POST' });
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+        let buffer = '';
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+            const parts = buffer.split('\n\n');
+            buffer = parts.pop();
+
+            for (const line of parts) {
+                if (!line.startsWith('data: ')) continue;
+                try {
+                    const data = JSON.parse(line.substring(6));
+                    
+                    if (data.status) {
+                        status.innerText = data.status;
+                    }
+                    if (data.error) {
+                        status.style.color = '#ef4444';
+                        status.innerText = '❌ ' + data.error;
+                        btn.disabled = false;
+                        btn.style.opacity = '1';
+                        btn.innerHTML = 'Retry Build';
+                    }
+                    if (data.done) {
+                        status.style.color = 'var(--accent)';
+                        status.innerText = '🎉 Success! Site launched on localhost:5173';
+                        btn.innerHTML = 'Site is Live ✓';
+                    }
+                } catch(e) {}
+            }
+        }
+    } catch (err) {
+        status.style.color = '#ef4444';
+        status.innerText = '❌ Connection lost to build server.';
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.innerHTML = 'Retry Build';
+    }
+}
+</script>
+</body>
+</html>
