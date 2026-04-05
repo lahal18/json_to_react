@@ -1,0 +1,210 @@
+{
+  "Hero": {
+    "props": ["title", "subtitle", "children", "className", "background", "textAlign", "size"],
+    "allowedChildren": []
+  },
+  "HeroSplit": {
+    "props": ["title", "description", "image", "children", "className", "imagePosition", "reverse"],
+    "allowedChildren": []
+  },
+  "HeroWithImage": {
+    "props": ["title", "subtitle", "imageUrl", "imageAlt", "children", "className", "overlay", "overlayOpacity"],
+    "allowedChildren": []
+  },
+  "HeroCTA": {
+    "props": ["title", "description", "primaryButton", "secondaryButton", "className", "background"],
+    "allowedChildren": []
+  },
+  "Section": {
+    "props": ["children", "className", "backgroundColor", "padding"],
+    "allowedChildren": []
+  },
+  "Card": {
+    "props": ["children", "className", "padding", "shadow", "rounded", "border", "hover"],
+    "allowedChildren": []
+  },
+  "FlexColumn": {
+    "props": ["children", "className", "align", "justify", "gap"],
+    "allowedChildren": []
+  },
+  "FlexRow": {
+    "props": ["children", "className", "align", "justify", "wrap", "gap"],
+    "allowedChildren": []
+  },
+  "Grid": {
+    "props": ["children", "className", "cols", "gap"],
+    "allowedChildren": []
+  },
+  "FeatureGrid": {
+    "props": ["features", "className", "cols", "gap"],
+    "allowedChildren": ["FeatureCard"]
+  },
+  "Container": {
+    "props": ["children", "className", "maxWidth", "padding"],
+    "allowedChildren": ["Hero", "FeatureGrid", "Heading", "TextBlock"]
+  },
+  "Heading": {
+    "props": ["children", "level", "className", "color", "align"],
+    "allowedChildren": []
+  },
+  "TextBlock": {
+    "props": ["children", "className", "size", "color", "align", "as"],
+    "allowedChildren": []
+  },
+  "Navbar": {
+    "props": ["logo", "children", "className", "links", "cta", "sticky", "transparent"],
+    "allowedChildren": []
+  },
+  "Footer": {
+    "props": ["className", "logo", "copyright", "sections", "socialLinks"],
+    "allowedChildren": []
+  },
+  "Sidebar": {
+    "props": ["children", "className", "isOpen", "onClose", "position", "width"],
+    "allowedChildren": []
+  },
+  "SearchBar": {
+    "props": ["onSearch", "placeholder", "className", "debounceMs"],
+    "allowedChildren": []
+  },
+  "Pagination": {
+    "props": ["currentPage", "totalPages", "onPageChange", "className", "siblingCount"],
+    "allowedChildren": []
+  },
+  "Breadcrumbs": {
+    "props": ["items", "className", "separator"],
+    "allowedChildren": []
+  },
+  "FeatureCard": {
+    "props": ["title", "description", "icon", "className", "variant"],
+    "allowedChildren": []
+  },
+  "FeatureList": {
+    "props": ["features", "className", "layout"],
+    "allowedChildren": []
+  },
+  "PricingTable": {
+    "props": ["plans", "className", "columns"],
+    "allowedChildren": []
+  },
+  "Testimonials": {
+    "props": ["testimonials", "className", "variant", "columns", "autoplay", "autoplaySpeed"],
+    "allowedChildren": []
+  },
+  "CTASection": {
+    "props": ["title", "description", "primaryButton", "secondaryButton", "className", "background", "textColor", "align"],
+    "allowedChildren": []
+  },
+  "Badge": {
+    "props": ["children", "className", "variant", "size", "rounded"],
+    "allowedChildren": []
+  },
+  "Divider": {
+    "props": ["className", "orientation", "thickness", "color", "label"],
+    "allowedChildren": []
+  },
+  "Icon": {
+    "props": ["name", "className", "size", "color"],
+    "allowedChildren": []
+  },
+  "Image": {
+    "props": ["src", "alt", "className", "width", "height", "rounded", "objectFit", "lazy", "fallback"],
+    "allowedChildren": []
+  },
+  "Video": {
+    "props": ["src", "className", "width", "height", "controls", "autoPlay", "loop", "muted", "poster"],
+    "allowedChildren": []
+  },
+  "Chart": {
+    "props": ["type", "data", "className", "title", "height"],
+    "allowedChildren": []
+  },
+  "ProgressBar": {
+    "props": ["value", "max", "className", "showLabel", "labelPosition", "variant", "size", "animated"],
+    "allowedChildren": []
+  },
+  "StatsCard": {
+    "props": ["title", "value", "icon", "change", "description", "className"],
+    "allowedChildren": []
+  },
+  "Table": {
+    "props": ["columns", "data", "className", "striped", "hoverable", "bordered"],
+    "allowedChildren": []
+  },
+  "Checkbox": {
+    "props": ["label", "error", "className", "id", "disabled", "checked", "onChange", "name", "value", "required", "readOnly", "autoFocus", "form", "tabIndex", "type"],
+    "allowedChildren": []
+  },
+  "Form": {
+    "props": ["children", "onSubmit", "className", "method", "encType"],
+    "allowedChildren": []
+  },
+  "InputField": {
+    "props": ["label", "error", "helper", "className", "id", "disabled", "value", "onChange", "name", "type", "required", "readOnly", "autoFocus", "form", "tabIndex", "placeholder", "min", "max", "step", "pattern"],
+    "allowedChildren": []
+  },
+  "RadioButton": {
+    "props": ["label", "error", "className", "id", "disabled", "checked", "onChange", "name", "value", "required", "readOnly", "autoFocus", "form", "tabIndex", "type"],
+    "allowedChildren": []
+  },
+  "SelectDropdown": {
+    "props": ["label", "options", "error", "helper", "className", "id", "disabled", "value", "onChange", "name", "required", "readOnly", "autoFocus", "form", "tabIndex", "multiple", "size"],
+    "allowedChildren": []
+  },
+  "SubmitButton": {
+    "props": ["loading", "loadingText", "variant", "size", "fullWidth", "className", "disabled", "children", "onClick", "type", "autoFocus", "form", "tabIndex"],
+    "allowedChildren": []
+  },
+  "Textarea": {
+    "props": ["label", "error", "helper", "className", "id", "rows", "disabled", "value", "onChange", "name", "required", "readOnly", "autoFocus", "form", "tabIndex", "placeholder", "minLength", "maxLength", "wrap"],
+    "allowedChildren": []
+  },
+  "ToggleSwitch": {
+    "props": ["label", "description", "className", "id", "checked", "onChange", "disabled", "name", "value", "required", "readOnly", "autoFocus", "form", "tabIndex"],
+    "allowedChildren": []
+  },
+  "Accordion": {
+    "props": ["items", "className", "allowMultiple", "defaultExpanded"],
+    "allowedChildren": []
+  },
+  "DropdownMenu": {
+    "props": ["trigger", "items", "className", "position", "width"],
+    "allowedChildren": []
+  },
+  "Modal": {
+    "props": ["isOpen", "onClose", "children", "className", "title", "size", "closeOnClickOutside", "showCloseButton"],
+    "allowedChildren": []
+  },
+  "Tabs": {
+    "props": ["tabs", "className", "defaultActiveIndex", "onChange", "variant"],
+    "allowedChildren": []
+  },
+  "Tooltip": {
+    "props": ["children", "content", "position", "delay", "className"],
+    "allowedChildren": []
+  },
+  "ContactForm": {
+    "props": ["apiEndpoint", "title", "successMessage", "className"],
+    "allowedChildren": []
+  },
+  "LoginForm": {
+    "props": ["apiEndpoint", "title", "redirectUrl", "className"],
+    "allowedChildren": []
+  },
+  "ProductGrid": {
+    "props": ["apiEndpoint", "title", "className"],
+    "allowedChildren": []
+  },
+  "SignUpForm": {
+    "props": ["apiEndpoint", "title", "redirectUrl", "className"],
+    "allowedChildren": []
+  },
+  "CheckoutButton": {
+    "props": ["paymentUrl", "amount", "buttonText", "className"],
+    "allowedChildren": []
+  },
+  "FileUploader": {
+    "props": ["apiEndpoint", "label", "acceptedTypes", "className"],
+    "allowedChildren": []
+  }
+}

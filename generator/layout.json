@@ -1,0 +1,255 @@
+{
+  "theme": {
+    "primaryColor": "indigo",
+    "radius": "xl"
+  },
+  "layout": {
+    "header": [
+      {
+        "type": "Navbar",
+        "props": {
+          "logo": "AI Studio Pro",
+          "sticky": true,
+          "links": [
+            { "label": "Home", "href": "/" },
+            { "label": "Shop", "href": "/shop" },
+            { "label": "Dashboard", "href": "/dashboard" },
+            { "label": "Auth", "href": "/auth" },
+            { "label": "UI Kit", "href": "/uikit" }
+          ]
+        }
+      }
+    ],
+    "footer": [
+      {
+        "type": "Footer",
+        "props": {
+          "copyright": "© 2026 AI Studio Pro. Built with Autonomous React.",
+          "links": ["Privacy", "Terms", "Contact"]
+        }
+      }
+    ]
+  },
+  "pages": [
+    {
+      "name": "Home",
+      "layout": [
+        {
+          "type": "HeroSplit",
+          "props": {
+            "title": "Next-Gen Web Generation",
+            "description": "This entire page was generated from a single JSON file. Now with full backend capabilities.",
+            "image": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80",
+            "imagePosition": "right"
+          }
+        },
+        {
+          "type": "Section",
+          "props": { "backgroundColor": "bg-gray-50", "padding": "py-20" },
+          "children": [
+            {
+              "type": "Container",
+              "children": [
+                {
+                  "type": "Heading",
+                  "props": { "text": "Why choose our engine?", "align": "center", "className": "mb-12" }
+                },
+                {
+                  "type": "FeatureGrid",
+                  "props": { "cols": 3, "gap": "lg" },
+                  "children": [
+                    { "type": "FeatureCard", "props": { "title": "Autonomous", "description": "Generates code while you sleep.", "variant": "elevated" } },
+                    { "type": "FeatureCard", "props": { "title": "Forgiving", "description": "Never crashes on bad AI props.", "variant": "elevated" } },
+                    { "type": "FeatureCard", "props": { "title": "Full-Stack", "description": "Connects to databases instantly.", "variant": "elevated" } }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "Container",
+          "props": { "className": "py-20", "maxWidth": "md" },
+          "children": [
+            { "type": "ContactForm", "props": { "title": "Questions? Contact Us", "successMessage": "Message received! We will email you shortly." } }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Shop",
+      "layout": [
+        {
+          "type": "Container",
+          "props": { "padding": true, "className": "py-12" },
+          "children": [
+            {
+              "type": "FlexRow",
+              "props": { "justify": "between", "align": "center", "className": "mb-8" },
+              "children": [
+                {
+                  "type": "Heading",
+                  "props": { "text": "Our Products", "level": 1 }
+                },
+                {
+                  "type": "CheckoutButton",
+                  "props": { "amount": "$199.00", "buttonText": "Proceed to Checkout" }
+                }
+              ]
+            },
+            {
+              "type": "ProductGrid",
+              "props": { "title": "Trending Now" }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "layout": [
+        {
+          "type": "Container",
+          "props": { "padding": true, "className": "py-16" },
+          "children": [
+            {
+              "type": "Grid",
+              "props": { "cols": 2, "gap": "xl" },
+              "children": [
+                { "type": "LoginForm", "props": { "title": "Welcome Back" } },
+                { "type": "SignUpForm", "props": { "title": "Create New Account" } }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "layout": [
+        {
+          "type": "Container",
+          "props": { "padding": true, "className": "py-8" },
+          "children": [
+            {
+              "type": "FlexRow",
+              "props": { "justify": "between", "align": "center", "className": "mb-8" },
+              "children": [
+                {
+                  "type": "FlexColumn",
+                  "children": [
+                    { "type": "Breadcrumbs", "props": { "items": [{ "label": "Home", "href": "/" }, { "label": "Dashboard" }] } },
+                    { "type": "Heading", "props": { "text": "Analytics Overview", "level": 2, "className": "mt-2" } }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "Grid",
+              "props": { "cols": 4, "gap": "md", "className": "mb-8" },
+              "children": [
+                { "type": "StatsCard", "props": { "title": "Total Users", "value": "24,593", "change": "+12%" } },
+                { "type": "StatsCard", "props": { "title": "Revenue", "value": "$84,230", "change": "+5.4%" } },
+                { "type": "StatsCard", "props": { "title": "Active Sessions", "value": "1,204", "change": "-2.1%" } },
+                {
+                  "type": "Card",
+                  "props": { "padding": "md", "className": "flex flex-col justify-center" },
+                  "children": [
+                    { "type": "TextBlock", "props": { "text": "System Health", "size": "sm", "color": "text-gray-500" } },
+                    { "type": "ProgressBar", "props": { "value": 92, "max": 100, "showLabel": true, "variant": "success", "className": "mt-2" } }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "Grid",
+              "props": { "cols": 3, "gap": "lg" },
+              "children": [
+                {
+                  "type": "Card",
+                  "children": [
+                    { "type": "Heading", "props": { "text": "Traffic Sources", "level": 4, "className": "mb-4" } },
+                    { "type": "Chart", "props": { "type": "bar", "height": "300px", "data": [10, 20, 30, 40] } }
+                  ]
+                },
+                {
+                  "type": "Card",
+                  "props": { "className": "col-span-1" },
+                  "children": [
+                    { "type": "Heading", "props": { "text": "Upload Documents", "level": 4, "className": "mb-4" } },
+                    { "type": "FileUploader", "props": { "label": "Upload your tax forms", "acceptedTypes": ".pdf,.doc" } }
+                  ]
+                },
+                {
+                  "type": "Card",
+                  "children": [
+                    { "type": "Heading", "props": { "text": "Recent Transactions", "level": 4, "className": "mb-4" } },
+                    {
+                      "type": "Table",
+                      "props": {
+                        "striped": true,
+                        "columns": ["ID", "User", "Amount"],
+                        "data": [
+                          ["#1001", "Alice Smith", "$120.00"],
+                          ["#1002", "Bob Jones", "$85.50"]
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "UIKit",
+      "layout": [
+        {
+          "type": "Container",
+          "props": { "className": "py-12" },
+          "children": [
+            { "type": "Heading", "props": { "text": "Component Library Sandbox", "level": 1, "className": "mb-10" } },
+            {
+              "type": "Grid",
+              "props": { "cols": 2, "gap": "lg" },
+              "children": [
+                {
+                  "type": "Card",
+                  "children": [
+                    { "type": "Heading", "props": { "text": "Interactive Elements", "level": 3, "className": "mb-4" } },
+                    {
+                      "type": "Tabs",
+                      "props": {
+                        "tabs": [
+                          { "label": "Details", "content": "This is the details panel. It supports rich content." },
+                          { "label": "Settings", "content": "Adjust your preferences here." }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "Card",
+                  "children": [
+                    { "type": "Heading", "props": { "text": "FAQs", "level": 3, "className": "mb-4" } },
+                    {
+                      "type": "Accordion",
+                      "props": {
+                        "items": [
+                          { "title": "Is this generated by AI?", "content": "Yes, entirely parsed from a JSON layout." },
+                          { "title": "Can I nest components?", "content": "Yes, look at how this Accordion is inside a Card!" }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

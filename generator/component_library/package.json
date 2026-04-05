@@ -1,0 +1,23 @@
+{
+  "name": "my-component-library",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "react": "^19.2.4",
+    "react-dom": ">=16.8.0"
+  },
+  "dependencies": {
+    "@types/node": "^25.4.0",
+    "@types/react": "^19.2.14"
+  }
+}
