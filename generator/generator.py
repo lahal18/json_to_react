@@ -30,12 +30,30 @@ def inject_telemetry(site_dir):
 
     # 2. The Telemetry Payload
     telemetry_script = """
-    <script src="https://browser.sentry-cdn.com/7.105.0/bundle.min.js" crossorigin="anonymous"></script>
     <script>
-      Sentry.init({
-        dsn: "", // Replace with actual DSN when ready
+      window.addEventListener('error', function(event) {
+        const errorLog = event.error ? event.error.stack : event.message;
+        fetch('http://localhost:5000/report-runtime-error', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ error: errorLog })
+        }).then(res => res.json())
+          .then(data => {
+             if (data.status === "healed") {
+                 console.log(" AI Surgeon patched the code! Refreshing in 3 seconds...");
+                 setTimeout(() => window.location.reload(), 3000);
+             }
+          }).catch(err => console.error("Could not reach AI Surgeon:", err));
       });
-      Sentry.setTag("project_id", '""" + PROJECT_ID + """');
+
+      window.addEventListener('unhandledrejection', function(event) {
+        const errorLog = event.reason ? (event.reason.stack || event.reason) : "Unhandled Promise Rejection";
+        fetch('http://localhost:5000/report-runtime-error', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ error: errorLog })
+        });
+      });
     </script>
     """
 
@@ -53,20 +71,12 @@ def inject_telemetry(site_dir):
     print(" Local Telemetry script injected successfully!")
 
 
-import argparse
-
 # ----------------------------------------------------
 # PATH CONFIGURATION
 # ----------------------------------------------------
-
-parser = argparse.ArgumentParser(description='Generate React Site.')
-parser.add_argument('--output-dir', type=str, default="../generated_site", help='Directory to generate the site in.')
-parser.add_argument('--project-id', type=str, default="default_project", help='ID of the project.')
-args = parser.parse_args()
-
+SITE_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "generated_site"))
 SITE_TEMPLATE = "../site_template"
-GENERATED_SITE = args.output_dir
-PROJECT_ID = args.project_id
+GENERATED_SITE = "../generated_site"
 
 SRC_PATH = os.path.join(GENERATED_SITE, "src")
 PAGES_PATH = os.path.join(SRC_PATH, "pages")
@@ -268,8 +278,8 @@ with open(app_path, "w") as f:
 # 1. Get the directory where generator.py currently lives
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# 2. Get the correct site root
-SITE_ROOT = os.path.abspath(GENERATED_SITE)
+# 2. Go up one level, and then into 'generated_site'
+SITE_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, "..", "generated_site"))
 
 # 3. Inject the telemetry script into the correct index.html
 inject_telemetry(SITE_ROOT)
