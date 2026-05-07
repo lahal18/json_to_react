@@ -10,7 +10,7 @@ def copy_components(used, registry, dest):
     # 1. Copy the individual component files
     for comp in used:
         if comp not in registry:
-            print(f"⚠️ Warning: {comp} is not in your component_registry.json!")
+            print(f" Warning: {comp} is not in your component_registry.json!")
             continue
 
         rel = registry[comp]
@@ -24,9 +24,9 @@ def copy_components(used, registry, dest):
                 content = f.read()
             with open(dst, "w") as f:
                 f.write(content)
-            print(f"✅ Successfully copied: {rel}.tsx")
+            print(f" Successfully copied: {rel}.tsx")
         except FileNotFoundError:
-            print(f"❌ ERROR: Could not find the source file at {src}")
+            print(f" ERROR: Could not find the source file at {src}")
 
     # ==========================================
     # 2. Build the Smart index.ts
@@ -50,15 +50,15 @@ def copy_components(used, registry, dest):
             for comp in used:
                 if comp in line:
                     smart_lines.append(line)
-                    print(f"➕ Keeping export for {comp}: {line.strip()}")
+                    print(f"Keeping export for {comp}: {line.strip()}")
                     break 
 
         with open(new_index_path, "w") as f:
             f.writelines(smart_lines)
             
-        print(f"✅ Successfully wrote new generated index.ts with {len(smart_lines)} lines!")
+        print(f" Successfully wrote new generated index.ts with {len(smart_lines)} lines!")
             
     except FileNotFoundError:
-        print(f"❌ CRITICAL ERROR: Could not find the master index file to read from!")
+        print(f" CRITICAL ERROR: Could not find the master index file to read from!")
         
     print("--- DEBUG: FINISHED COMPONENT COPIER ---\n")

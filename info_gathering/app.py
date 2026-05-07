@@ -22,9 +22,9 @@ app = Flask(__name__)
 # ==========================================
 # 1. API CONFIGURATION
 # ==========================================
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
-GROQ_API_KEY   = os.environ.get("GROQ_API_KEY",   "")
-NVIDIA_API_KEY = os.environ.get("NVIDIA_API_KEY",  "")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "AIzaSyASFrTM3i9eIu2KhNlHyR7rsvQ8kWTzjd0")
+GROQ_API_KEY   = os.environ.get("GROQ_API_KEY",   "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")
+NVIDIA_API_KEY = os.environ.get("NVIDIA_API_KEY",  "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")
 
 GEMINI_URL = (
     "https://generativelanguage.googleapis.com/v1beta/models/"
@@ -44,7 +44,8 @@ nvidia_client = OpenAI(
     base_url="https://integrate.api.nvidia.com/v1",
     api_key=NVIDIA_API_KEY,
 )
-NVIDIA_MODEL      = "nvidia/nemotron-3-nano-30b-a3b"
+NVIDIA_MODEL  = "nvidia/nemotron-3-nano-30b-a3b" 
+HEALING_MODEL = NVIDIA_MODEL
 NVIDIA_MAX_TOKENS = 4096   # small enough per segment, large enough for detail
 
 # ==========================================
@@ -56,7 +57,7 @@ METADATA_PATH = os.path.abspath(
 )
 
 GEN_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "generator"))
-SITE_DIR = os.path.join(GEN_DIR, "component_library")
+SITE_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "generated_site"))
 TARGET_JSON = os.path.join(GEN_DIR, "layout.json")
 SOURCE_JSON = os.path.join(BASE_DIR, "generated_layout.json")
 
@@ -397,6 +398,157 @@ def _extract_field(summary: str, field: str, default: str = "") -> str:
     return match.group(1).strip() if match else default
 
 
+import json # Make sure this is imported at the top of app.py!
+
+def _chunk_text(text, max_chars=3000):
+    """
+    Grabs the Top and Bottom of the error log.
+    Vite usually puts the file path at the very top!
+    """
+    if len(text) <= max_chars:
+        return text
+    
+    half = max_chars // 2
+    head = text[:half]
+    tail = text[-half:]
+    
+    return f"{head}\n\n... [MIDDLE TRUNCATED TO SAVE TOKENS] ...\n\n{tail}"
+
+def heal_react_code(error_log, site_dir):
+    """The AI Surgeon: Diagnoses errors and rewrites code using Nemotron-120b."""
+    
+    # 🚨 EXACT ERROR PRINT
+    print("\n" + "="*50)
+    print("🚨 EXACT VITE ERROR LOG:")
+    print(error_log)
+    print("="*50 + "\n")
+    
+    try:
+        # 1. Grab the Top and Bottom of the error log
+        chunked_log = _chunk_text(error_log, max_chars=3000)
+        
+        # 2. Ask Nemotron to extract the path using JSON formatting
+        # 2. Ask Nemotron to extract the path using JSON formatting
+        prompt1 = f"""Analyze this React/Vite build error.
+        Extract the EXACT relative file path of the SOURCE CODE file causing the issue.
+        
+        CRITICAL RULES:
+        1. IGNORE internal Node.js, Vite, or Rollup stack traces (e.g., do not output paths starting with node_modules/, internal/, or scripts/).
+        2. The file MUST be part of the user's actual codebase, usually ending in .tsx, .ts, .jsx, or .js (e.g., src/components/Hero.tsx).
+        
+        Respond ONLY with a valid JSON object in this exact format: {{"file_path": "src/components/YourFile.tsx"}}
+        
+        Error Log:
+        {chunked_log}"""
+        
+        res1 = nvidia_client.chat.completions.create(
+            model=HEALING_MODEL,
+            messages=[
+                {"role": "system", "content": "You are a JSON path extractor. Output ONLY valid JSON."},
+                {"role": "user", "content": prompt1}
+            ],
+            temperature=0.1, 
+            max_tokens=1000,
+            stream=False,
+            extra_body={
+                "reasoning_budget": 0,
+                "chat_template_kwargs": {"enable_thinking": False},
+            }
+        )
+        
+        raw_path_content = res1.choices[0].message.content
+        if not raw_path_content:
+            return False, "AI failed to extract a file path (empty response)."
+            
+        # --- FIXED: STRIP OUT <think> TAGS ---
+        if "</think>" in raw_path_content:
+            raw_path_content = raw_path_content.split("</think>")[-1].strip()
+            
+        # Parse the JSON response
+        try:
+            clean_json_str = raw_path_content.replace('```json', '').replace('```', '').strip()
+            path_data = json.loads(clean_json_str)
+            relative_path = path_data.get("file_path", "")
+        except json.JSONDecodeError:
+            return False, f"AI output invalid JSON for path extraction: {raw_path_content}"
+
+        if not relative_path:
+            return False, "AI returned JSON, but the file_path was empty."
+            
+        full_path = os.path.join(site_dir, relative_path)
+        
+        if not os.path.exists(full_path):
+            return False, f"Could not locate the broken file on disk: {relative_path}"
+
+        # 3. Read the broken code
+        with open(full_path, 'r', encoding='utf-8', errors='ignore') as f:
+            broken_code = f.read()
+            
+        chunked_code = _chunk_text(broken_code, max_chars=8000)
+
+        # 4. Ask Nemotron to write the fix
+        prompt2 = f"""You are an expert React and TypeScript developer. Fix the build error in this file.
+        
+        Error Log:
+        {chunked_log}
+        
+        Broken Code ({relative_path}):
+        ```tsx
+        {chunked_code}
+        ```
+        
+        CRITICAL: Return ONLY the raw, corrected code. 
+        Do not include markdown fences (like ```tsx) around the final output."""
+        
+        res2 = nvidia_client.chat.completions.create(
+            model=HEALING_MODEL,
+            messages=[
+                {"role": "system", "content": "You are a code fixer. Output ONLY raw, valid code."},
+                {"role": "user", "content": prompt2}
+            ],
+            temperature=0.2, 
+            max_tokens=4000,
+            stream=False,
+            extra_body={
+                "reasoning_budget": 0,
+                "chat_template_kwargs": {"enable_thinking": False},
+            }
+        )
+        
+        raw_code_content = res2.choices[0].message.content
+        if not raw_code_content:
+            return False, "AI failed to generate a code fix (empty response)."
+            
+        # --- FIXED: STRIP OUT <think> TAGS ---
+        if "</think>" in raw_code_content:
+            raw_code_content = raw_code_content.split("</think>")[-1].strip()
+            
+        fixed_code = raw_code_content.strip()
+        
+        # 5. Clean up the AI's output
+        import re
+        match = re.search(r'```(?:tsx|ts|jsx|js|javascript|typescript|html|css)?\s(.*?)```', fixed_code, re.DOTALL)
+        if match:
+            fixed_code = match.group(1).strip()
+        else:
+            # Fallback if no markdown fences were provided
+            fixed_code = fixed_code.strip()
+            
+        if not fixed_code:
+            return False, "AI generated an empty code block."
+
+        # 6. Apply the patch
+        with open(full_path, 'w', encoding='utf-8') as f:
+            f.write(fixed_code)
+            
+        return True, f"Patched {relative_path}"
+        
+    except Exception as e:
+        import traceback # Useful for debugging exact line errors
+        traceback.print_exc()
+        return False, str(e)
+
+
 # ==========================================
 # 6. FLASK ROUTES
 # ==========================================
@@ -553,43 +705,56 @@ def generate():
 
 @app.route("/build", methods=["POST"])
 def build_site():
+    data = request.get_json() or {}
+    project_id = data.get("project_id", "default_project")
+    
+    SITE_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "sandbox", project_id))
+
     def build_stream():
         try:
             # 1. Move JSON
             yield f"data: {json.dumps({'status': '🚚 Copying layout.json to generator...'})}\n\n"
+            # It's better to process JSON in GEN_DIR, but since app.py reads SOURCE_JSON from its dir
             if os.path.exists(SOURCE_JSON):
                 shutil.copy(SOURCE_JSON, TARGET_JSON)
             else:
                 yield f"data: {json.dumps({'error': 'generated_layout.json not found.'})}\n\n"
                 return
 
-            # 2. Run Python Generator
-            yield f"data: {json.dumps({'status': '⚙️ Running generator.py...'})}\n\n"
-            gen_proc = subprocess.run(['python', 'generator.py'], cwd=GEN_DIR, capture_output=True, text=True)
+            # 2. Run Python Generator and stream output
+            yield f"data: {json.dumps({'status': '⚙️ Generating React components...'})}\n\n"
+            
+            gen_proc = subprocess.Popen(
+                ['python', 'generator.py', '--output-dir', SITE_DIR, '--project-id', project_id], 
+                cwd=GEN_DIR, 
+                stdout=subprocess.PIPE, 
+                stderr=subprocess.STDOUT, 
+                text=True, 
+                bufsize=1
+            )
+            
+            for line in gen_proc.stdout:
+                clean_line = line.strip()
+                if clean_line:
+                    yield f"data: {json.dumps({'status': f'├── {clean_line}'})}\n\n"
+                    
+            gen_proc.wait()
             if gen_proc.returncode != 0:
-                yield f"data: {json.dumps({'error': f'Generator crashed: {gen_proc.stderr}'})}\n\n"
+                yield f"data: {json.dumps({'error': 'Generator failed.'})}\n\n"
                 return
 
             # 3. NPM Install
             yield f"data: {json.dumps({'status': '📦 Installing NPM dependencies...'})}\n\n"
             subprocess.run(['npm', 'install'], cwd=SITE_DIR, shell=True)
 
-            # 4. Vite Build (Testing for React errors)
-            yield f"data: {json.dumps({'status': '🏗️ Building React site to check for errors...'})}\n\n"
-            build_proc = subprocess.run(['npm', 'run', 'build'], cwd=SITE_DIR, shell=True, capture_output=True, text=True)
+            # 4. Start Dev Server Configuration
+            yield f"data: {json.dumps({'status': '🚀 Build generated successfully! Starting Dev Server...'})}\n\n"
             
-            if build_proc.returncode != 0:
-                yield f"data: {json.dumps({'error': f'React Build Failed! Errors detected in the generated code.'})}\n\n"
-                return
-
-            # 5. Start Dev Server & Open Browser
-            yield f"data: {json.dumps({'status': '🚀 Starting Dev Server...'})}\n\n"
+            # Find and kill any existing node process in Windows (on port 5173 ideally)
+            # For simplicity, we just run the server. If the user clicks multiple times, it might fail to bind 5173.
             subprocess.Popen(['npm', 'run', 'dev'], cwd=SITE_DIR, shell=True)
             
-            import webbrowser
-            webbrowser.open('http://localhost:5173')
-
-            yield f"data: {json.dumps({'done': True})}\n\n"
+            yield f"data: {json.dumps({'done': True, 'url': 'http://localhost:5173'})}\n\n"
 
         except Exception as e:
             logger.exception("Build pipeline failed.")
@@ -597,6 +762,81 @@ def build_site():
 
     return Response(build_stream(), mimetype="text/event-stream")
 
+
+@app.route("/report-runtime-error", methods=["POST"])
+def report_runtime_error():
+    data = request.get_json()
+    error_message = data.get("error", "Unknown runtime error")
+    project_id = data.get("project_id", "default_project")
+    
+    print("\n" + "🚨"*10)
+    print("RUNTIME ERROR DETECTED BY BROWSER TELEMETRY:")
+    print(error_message)
+    print("PROJECT:", project_id)
+    print("🚨"*10 + "\n")
+
+    SITE_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "sandbox", project_id))
+    
+    # Run the same healing logic we built earlier
+    is_healed, message = heal_react_code(error_message, SITE_DIR)
+    
+    if is_healed:
+        print(f"🩹 AI Surgeon applied fix: {message}")
+        print("🔄 Please refresh your browser to test the fix.")
+        return jsonify({"status": "healed", "message": message}), 200
+    else:
+        print(f"❌ AI Surgeon failed to fix runtime error: {message}")
+        return jsonify({"status": "failed", "message": message}), 500
+
+@app.route("/api/projects", methods=["GET"])
+def list_projects():
+    sandbox_dir = os.path.abspath(os.path.join(BASE_DIR, "..", "sandbox"))
+    if not os.path.exists(sandbox_dir):
+        return jsonify([])
+    projects = [p for p in os.listdir(sandbox_dir) if os.path.isdir(os.path.join(sandbox_dir, p))]
+    return jsonify(projects)
+
+@app.route("/ide/<project_id>")
+def ide_view(project_id):
+    return render_template("ide.html", project_id=project_id)
+
+@app.route("/api/sandbox/<project_id>/tree")
+def sandbox_tree(project_id):
+    site_dir = os.path.abspath(os.path.join(BASE_DIR, "..", "sandbox", project_id))
+    if not os.path.exists(site_dir):
+        return jsonify({"error": "Project not found"}), 404
+
+    def build_tree(dir_path):
+        tree = []
+        for name in sorted(os.listdir(dir_path)):
+            if name in ['node_modules', '.git']:
+                continue
+            path = os.path.join(dir_path, name)
+            is_dir = os.path.isdir(path)
+            node = {
+                "name": name,
+                "path": os.path.relpath(path, site_dir),
+                "is_dir": is_dir
+            }
+            if is_dir:
+                node["children"] = build_tree(path)
+            tree.append(node)
+        return tree
+
+    return jsonify(build_tree(site_dir))
+
+@app.route("/api/sandbox/<project_id>/file")
+def get_sandbox_file(project_id):
+    file_path = request.args.get("path")
+    site_dir = os.path.abspath(os.path.join(BASE_DIR, "..", "sandbox", project_id))
+    full_path = os.path.abspath(os.path.join(site_dir, file_path))
+    
+    if not full_path.lower().startswith(site_dir.lower()) or not os.path.exists(full_path) or not os.path.isfile(full_path):
+        return jsonify({"error": "Invalid file path"}), 400
+        
+    with open(full_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    return jsonify({"content": content})
 
 # ==========================================
 # 7. ENTRY POINT

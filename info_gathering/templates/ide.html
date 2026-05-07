@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Architect - Workspace</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
+    <style>
+        :root {
+            --bg: #09090b;
+            --surface-1: #18181b;
+            --surface-2: #27272a;
+            --border: #3f3f46;
+            --text-1: #fafafa;
+            --text-2: #a1a1aa;
+            --accent: #10b981;
+            --accent-glow: rgba(16, 185, 129, 0.2);
+            --header-h: 56px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text-1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* HEADER */
+        header {
+            height: var(--header-h);
+            background: rgba(24, 24, 27, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            flex-shrink: 0;
+            z-index: 10;
+        }
+        
+        .logo { display: flex; align-items: center; gap: 12px; }
+        .logo-icon { width: 28px; height: 28px; background: var(--accent); border-radius: 8px; display: grid; place-items: center; color: #000; font-weight: bold; font-family: 'JetBrains Mono', monospace; font-size: 14px;}
+        .logo h1 { font-size: 15px; font-weight: 500; letter-spacing: -0.2px; }
+
+        .header-actions button {
+            background: var(--surface-2);
+            color: var(--text-1);
+            border: 1px solid var(--border);
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .header-actions button:hover { background: var(--border); }
+
+        /* MAIN LAYOUT */
+        #workspace {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - var(--header-h));
+        }
+
+        /* SIDEBAR (Tree) */
+        #sidebar {
+            width: 250px;
+            background: var(--surface-1);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .tree-header { padding: 14px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-2); font-weight: 600; border-bottom: 1px solid var(--border); }
+        .tree-list { padding: 8px 0; }
+        .tree-node {
+            padding: 6px 16px; 
+            font-size: 13px; 
+            color: var(--text-2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.15s;
+        }
+        .tree-node:hover { background: rgba(255,255,255,0.05); color: var(--text-1); }
+        .tree-node.active { background: rgba(16, 185, 129, 0.1); color: var(--accent); border-right: 2px solid var(--accent); }
+        .tree-node svg { width: 14px; height: 14px; opacity: 0.7; }
+        .tree-indent { margin-left: 16px; }
+
+        /* EDITOR */
+        #editor-pane {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border);
+            background: var(--surface-1);
+            min-width: 300px;
+        }
+        .editor-tab {
+            height: 48px;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            font-size: 13px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-2);
+        }
+        #editor-container { flex: 1; overflow: hidden; }
+
+        /* BROWSER INTERFACE */
+        #browser-pane {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+            position: relative;
+        }
+        .browser-toolbar {
+            height: 48px;
+            background: #f1f5f9;
+            border-bottom: 1px solid #cbd5e1;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            gap: 12px;
+        }
+        .browser-dots { display: flex; gap: 6px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+        .dot.r { background: #ef4444; } .dot.y { background: #f59e0b; } .dot.g { background: #10b981; }
+        .browser-url { 
+            background: #fff; padding: 6px 12px; border-radius: 6px; font-size: 12px;
+            color: #475569; flex: 1; text-align: center; border: 1px solid #e2e8f0; font-family: 'JetBrains Mono', monospace;
+        }
+        .browser-refresh { cursor: pointer; color: #475569; }
+        
+        #preview-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #fff;
+        }
+
+        /* BUILD OVERLAY */
+        #build-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(9, 9, 11, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        #build-overlay.active { display: flex; }
+        
+        .build-card {
+            background: var(--surface-1);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            width: 480px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+        .build-status {
+            font-size: 14px;
+            margin-bottom: 24px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .spinner {
+            width: 18px; height: 18px; border: 2px solid var(--border);
+            border-top-color: var(--accent); border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        .terminal-log {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--text-2);
+            height: 200px;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+        .terminal-log div { margin-bottom: 4px; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <div class="logo-icon">&#10022;</div>
+        <h1>AI Architect Workspace</h1>
+    </div>
+    <div class="header-actions">
+        <span style="font-size: 13px; color: var(--text-2); margin-right: 16px;">Proj: {{ project_id }}</span>
+        <button onclick="window.location.href='/'">Exit Workspace</button>
+    </div>
+</header>
+
+<div id="workspace">
+    <!-- FILE EXPLORER -->
+    <div id="sidebar">
+        <div class="tree-header">EXPLORER</div>
+        <div class="tree-list" id="tree-root"></div>
+    </div>
+
+    <!-- CODE EDITOR -->
+    <div id="editor-pane">
+        <div class="editor-tab" id="editor-tab">Select a file to view</div>
+        <div id="editor-container"></div>
+    </div>
+
+    <!-- INTERNAL BROWSER -->
+    <div id="browser-pane">
+        <div class="browser-toolbar">
+            <div class="browser-dots">
+                <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+            </div>
+            <div class="browser-refresh" onclick="refreshIframe()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg>
+            </div>
+            <div class="browser-url">http://localhost:5173</div>
+        </div>
+        <iframe id="preview-iframe" src="about:blank"></iframe>
+    </div>
+</div>
+
+<!-- BUILD OVERLAY -->
+<div id="build-overlay">
+    <div class="build-card">
+        <div class="build-status" id="build-status">
+            <div class="spinner"></div> 
+            <span id="build-status-text">Initializing generation pipeline...</span>
+        </div>
+        <div class="terminal-log" id="terminal-log"></div>
+    </div>
+</div>
+
+<script>
+    const PROJECT_ID = "{{ project_id }}";
+    let monacoEditor = null;
+    
+    // Icons SVG
+    const iconFolder = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/></svg>`;
+    const iconFile = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>`;
+
+    // Initialize Monaco
+    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' }});
+    require(['vs/editor/editor.main'], function() {
+        monacoEditor = monaco.editor.create(document.getElementById('editor-container'), {
+            value: "// Select a file from the explorer to view code",
+            language: "typescript",
+            theme: "vs-dark",
+            automaticLayout: true,
+            readOnly: true,
+            minimap: { enabled: false },
+            fontSize: 13,
+            fontFamily: "'JetBrains Mono', monospace"
+        });
+        
+        monaco.editor.defineTheme('custom-dark', {
+            base: 'vs-dark',
+            inherit: true,
+            rules: [],
+            colors: {
+                'editor.background': '#18181b', // matched surface-1
+                'editor.lineHighlightBackground': '#27272a'
+            }
+        });
+        monaco.editor.setTheme('custom-dark');
+        
+        loadTree();
+    });
+
+    // BUILD STREAM 
+    window.onload = () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('start_build') === 'true') {
+            document.getElementById('build-overlay').classList.add('active');
+            startBuildStream();
+        } else {
+            // Already built, just show iframe
+            document.getElementById('preview-iframe').src = "http://localhost:5173";
+        }
+    };
+
+    function appendLog(text, isError=false) {
+        const log = document.getElementById('terminal-log');
+        const div = document.createElement('div');
+        div.innerText = text;
+        if(isError) div.style.color = '#ef4444';
+        log.appendChild(div);
+        log.scrollTop = log.scrollHeight;
+    }
+
+    async function startBuildStream() {
+        const statusText = document.getElementById('build-status-text');
+        try {
+            const res = await fetch('/build', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ project_id: PROJECT_ID })
+            });
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder('utf-8');
+            let buffer = '';
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                buffer += decoder.decode(value, { stream: true });
+                const parts = buffer.split('\n\n');
+                buffer = parts.pop();
+
+                for (const line of parts) {
+                    if (!line.startsWith('data: ')) continue;
+                    try {
+                        const data = JSON.parse(line.substring(6));
+                        
+                        if (data.status) {
+                            statusText.innerText = data.status;
+                            appendLog("> " + data.status);
+                        }
+                        if (data.error) {
+                            statusText.innerText = "Error encountered!";
+                            statusText.style.color = '#ef4444';
+                            appendLog("ERROR: " + data.error, true);
+                        }
+                        if (data.done) {
+                            statusText.innerText = 'Launch Complete! Opening preview...';
+                            appendLog("> Success, opening iframe...");
+                            setTimeout(() => {
+                                document.getElementById('build-overlay').classList.remove('active');
+                                document.getElementById('preview-iframe').src = "http://localhost:5173";
+                                loadTree(); // Reload tree to show new files
+                            }, 1500);
+                        }
+                    } catch(e) {}
+                }
+            }
+        } catch (err) {
+            statusText.innerText = "Connection lost to build server.";
+            appendLog("ERROR: Request failed.", true);
+        }
+    }
+
+    function refreshIframe() {
+        const iframe = document.getElementById('preview-iframe');
+        iframe.src = iframe.src;
+    }
+
+    // FILE TREE LOGIC
+    async function loadTree() {
+        try {
+            const res = await fetch('/api/sandbox/' + PROJECT_ID + '/tree');
+            if (!res.ok) return; // maybe not built yet
+            const tree = await res.json();
+            const root = document.getElementById('tree-root');
+            root.innerHTML = '';
+            renderNodes(tree, root, 0);
+        } catch (err) {
+            // silent fail if tree not ready
+        }
+    }
+
+    function renderNodes(nodes, container, depth) {
+        nodes.forEach(node => {
+            const el = document.createElement('div');
+            el.className = 'tree-node';
+            el.style.paddingLeft = (16 + (depth * 12)) + 'px';
+            el.innerHTML = (node.is_dir ? iconFolder : iconFile) + '<span>' + node.name + '</span>';
+            
+            if (!node.is_dir) {
+                el.onclick = () => {
+                    document.querySelectorAll('.tree-node').forEach(n => n.classList.remove('active'));
+                    el.classList.add('active');
+                    loadFile(node.path);
+                };
+            }
+            container.appendChild(el);
+            
+            if (node.children) {
+                renderNodes(node.children, container, depth + 1);
+            }
+        });
+    }
+
+    async function loadFile(path) {
+        document.getElementById('editor-tab').innerText = Object.values(path.split(/[\\/]/)).pop();
+        try {
+            const encodedPath = encodeURIComponent(path);
+            const res = await fetch('/api/sandbox/' + PROJECT_ID + '/file?path=' + encodedPath);
+            const data = await res.json();
+            if (res.ok) {
+                let language = "typescript";
+                if(path.endsWith(".css")) language = "css";
+                else if(path.endsWith(".html")) language = "html";
+                else if(path.endsWith(".json")) language = "json";
+                
+                monaco.editor.setModelLanguage(monacoEditor.getModel(), language);
+                monacoEditor.setValue(data.content);
+            } else {
+                monacoEditor.setValue("// Could not load " + path);
+            }
+        } catch (err) {
+            monacoEditor.setValue("// Error loading " + path);
+        }
+    }
+</script>
+</body>
+</html>

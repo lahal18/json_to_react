@@ -24,7 +24,7 @@ export default [
     plugins: [
       resolve(),
       commonjs(),
-      typescript({ tsconfig: './tsconfig.json' }),
+      typescript({ tsconfig: './tsconfig.json', emitDeclarationOnly: true }),
       postcss({
         config: {
           path: './postcss.config.js',

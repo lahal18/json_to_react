@@ -8,35 +8,50 @@
       {
         "type": "Navbar",
         "props": {
-          "logo": "ecommerce-logo",
-          "children": "Home|Products|About|Contact",
+          "logo": "logo",
+          "children": "logo",
           "className": "bg-indigo-600 text-white shadow-md",
           "links": [
             {
-              "label": "Shop",
-              "href": "/shop"
+              "type": "Link",
+              "props": {
+                "href": "/",
+                "children": "Home"
+              }
             },
             {
-              "label": "Cart",
-              "href": "/cart"
+              "type": "Link",
+              "props": {
+                "href": "/products",
+                "children": "Products"
+              }
             },
             {
-              "label": "Account",
-              "href": "/account"
+              "type": "Link",
+              "props": {
+                "href": "/cart",
+                "children": "Cart"
+              }
             },
             {
-              "label": "Wishlist",
-              "href": "/wishlist"
-            }
-          ],
-          "cta": [
-            {
-              "label": "Login",
-              "href": "/login"
-            },
-            {
-              "label": "Sign Up",
-              "href": "/signup"
+              "type": "CTA",
+              "props": {
+                "title": "Login",
+                "description": "",
+                "primaryButton": {
+                  "type": "SubmitButton",
+                  "props": {
+                    "children": "Sign In"
+                  }
+                },
+                "secondaryButton": {
+                  "type": "SubmitButton",
+                  "props": {
+                    "children": "Register"
+                  }
+                },
+                "className": "ml-2"
+              }
             }
           ],
           "sticky": true,
@@ -48,75 +63,54 @@
       {
         "type": "Footer",
         "props": {
-          "className": "bg-gray-800 text-gray-200 py-8",
-          "logo": "ecommerce-logo",
-          "copyright": "\u00a9 2025 E-Commerce Store. All rights reserved.",
+          "className": "text-gray-600 py-6 border-t",
+          "logo": "logo",
+          "copyright": "\u00a9 2025 Modern Gear Co.",
           "sections": [
             {
-              "title": "Company",
-              "links": [
-                "About",
-                "Careers",
-                "Blog",
-                "Press"
-              ]
+              "type": "Heading",
+              "props": {
+                "children": "Shop",
+                "level": 4,
+                "color": "text-gray-500"
+              }
             },
             {
-              "title": "Shop",
-              "links": [
-                "Shop",
-                "Products",
-                "Collections",
-                "Sale"
-              ]
+              "type": "Link",
+              "props": {
+                "href": "/about",
+                "children": "About Us"
+              }
             },
             {
-              "title": "Support",
-              "links": [
-                "Help Center",
-                "Returns",
-                "Privacy Policy",
-                "Terms of Service"
-              ]
-            },
-            {
-              "title": "Follow Us",
-              "socialLinks": [
-                {
-                  "icon": "facebook",
-                  "url": "https://facebook.com"
-                },
-                {
-                  "icon": "instagram",
-                  "url": "https://instagram.com"
-                },
-                {
-                  "icon": "twitter",
-                  "url": "https://twitter.com"
-                },
-                {
-                  "icon": "linkedin",
-                  "url": "https://linkedin.com"
-                }
-              ]
+              "type": "Link",
+              "props": {
+                "href": "/contact",
+                "children": "Contact"
+              }
             }
           ],
           "socialLinks": [
             {
-              "icon": "facebook",
-              "url": "https://facebook.com"
+              "type": "Link",
+              "props": {
+                "href": "#",
+                "children": "Instagram"
+              }
             },
             {
-              "icon": "instagram",
-              "url": "https://instagram.com"
+              "type": "Link",
+              "props": {
+                "href": "#",
+                "children": "Twitter"
+              }
             },
             {
-              "icon": "twitter",
-              "url": "https://twitter.com"
-            },
-            {
-              "icon": "linkedin",
-              "url": "https://linkedin.com"
+              "type": "Link",
+              "props": {
+                "href": "#",
+                "children": "LinkedIn"
+              }
             }
           ]
         }
@@ -130,25 +124,31 @@
         {
           "type": "Hero",
           "props": {
-            "title": "Welcome to Home",
-            "subtitle": "Discover more",
-            "className": "text-center py-20 bg-indigo-600 text-white",
-            "background": "hero-bg",
-            "textAlign": "center"
+            "title": "Welcome to Modern Gear",
+            "subtitle": "Premium equipment for discerning professionals",
+            "className": "text-center py-20",
+            "background": "bg-indigo-50"
           }
         },
         {
           "type": "Section",
           "props": {
-            "padding": 4,
-            "className": "bg-gray-50"
+            "className": "py-12"
           },
           "children": [
+            {
+              "type": "Heading",
+              "props": {
+                "children": "Featured Collections",
+                "level": 2,
+                "color": "text-gray-800"
+              }
+            },
             {
               "type": "Grid",
               "props": {
                 "cols": 3,
-                "gap": 4
+                "gap": 6
               },
               "children": [
                 {
@@ -156,351 +156,33 @@
                   "props": {
                     "className": "bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow",
                     "rounded": "lg",
-                    "border": "gray-100"
+                    "border": "border-gray-100"
                   },
                   "children": [
                     {
                       "type": "Image",
                       "props": {
-                        "src": "/images/featured1.jpg",
-                        "alt": "Featured Product 1",
-                        "className": "w-full h-48 object-cover rounded-t-lg"
+                        "src": "/images/premium-drill.jpg",
+                        "alt": "Premium Drill",
+                        "width": 300,
+                        "height": 200,
+                        "rounded": "md"
                       }
                     },
                     {
                       "type": "TextBlock",
                       "props": {
-                        "children": "Summer Collection",
-                        "className": "p-4 font-medium text-gray-700"
-                      }
-                    },
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "$199.99",
-                        "className": "p-4 font-bold text-indigo-600"
-                      }
-                    },
-                    {
-                      "type": "FlexRow",
-                      "props": {
-                        "justify": "center",
-                        "gap": 2
-                      },
-                      "children": [
-                        {
-                          "type": "Badge",
-                          "props": {
-                            "children": "New",
-                            "variant": "new",
-                            "size": "sm",
-                            "className": "absolute top-2 right-2"
-                          }
-                        },
-                        {
-                          "type": "SubmitButton",
-                          "props": {
-                            "children": "Add to Cart",
-                            "variant": "primary",
-                            "size": "sm",
-                            "className": "w-full bg-indigo-600 text-white py-2 rounded"
-                          }
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "Card",
-                  "props": {
-                    "className": "bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow",
-                    "rounded": "lg",
-                    "border": "gray-100"
-                  },
-                  "children": [
-                    {
-                      "type": "Image",
-                      "props": {
-                        "src": "/images/featured2.jpg",
-                        "alt": "Featured Product 2",
-                        "className": "w-full h-48 object-cover rounded-t-lg"
-                      }
-                    },
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "Eco-Friendly",
-                        "className": "p-4 font-medium text-gray-700"
-                      }
-                    },
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "$89.99",
-                        "className": "p-4 font-bold text-indigo-600"
-                      }
-                    },
-                    {
-                      "type": "FlexRow",
-                      "props": {
-                        "justify": "center",
-                        "gap": 2
-                      },
-                      "children": [
-                        {
-                          "type": "Badge",
-                          "props": {
-                            "children": "Sale",
-                            "variant": "sale",
-                            "size": "sm",
-                            "className": "absolute top-2 right-2"
-                          }
-                        },
-                        {
-                          "type": "SubmitButton",
-                          "props": {
-                            "children": "Add to Cart",
-                            "variant": "secondary",
-                            "size": "sm",
-                            "className": "w-full bg-gray-200 text-gray-800 py-2 rounded"
-                          }
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "Card",
-                  "props": {
-                    "className": "bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow",
-                    "rounded": "lg",
-                    "border": "gray-100"
-                  },
-                  "children": [
-                    {
-                      "type": "Image",
-                      "props": {
-                        "src": "/images/featured3.jpg",
-                        "alt": "Featured Product 3",
-                        "className": "w-full h-48 object-cover rounded-t-lg"
-                      }
-                    },
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "Best Sellers",
-                        "className": "p-4 font-medium text-gray-700"
+                        "children": "Pro Drill",
+                        "size": 2,
+                        "color": "text-gray-900"
                       }
                     },
                     {
                       "type": "TextBlock",
                       "props": {
                         "children": "$149.99",
-                        "className": "p-4 font-bold text-indigo-600"
-                      }
-                    },
-                    {
-                      "type": "FlexRow",
-                      "props": {
-                        "justify": "center",
-                        "gap": 2
-                      },
-                      "children": [
-                        {
-                          "type": "Badge",
-                          "props": {
-                            "children": "Popular",
-                            "variant": "popular",
-                            "size": "sm",
-                            "className": "absolute top-2 right-2"
-                          }
-                        },
-                        {
-                          "type": "SubmitButton",
-                          "props": {
-                            "children": "Add to Cart",
-                            "variant": "primary",
-                            "size": "sm",
-                            "className": "w-full bg-indigo-600 text-white py-2 rounded"
-                          }
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "Section",
-          "props": {
-            "padding": 6,
-            "className": "bg-gray-50"
-          },
-          "children": [
-            {
-              "type": "Heading",
-              "props": {
-                "children": "Featured Categories",
-                "level": 2,
-                "className": "text-2xl font-bold text-gray-800 mb-6"
-              }
-            },
-            {
-              "type": "FlexRow",
-              "props": {
-                "justify": "center",
-                "gap": 2,
-                "flexWrap": "wrap"
-              },
-              "children": [
-                {
-                  "type": "Card",
-                  "props": {
-                    "className": "bg-white rounded-lg p-4 text-center shadow-sm hover:shadow-md transition-shadow",
-                    "rounded": "lg"
-                  },
-                  "children": [
-                    {
-                      "type": "Icon",
-                      "props": {
-                        "name": "shopping-bag",
-                        "className": "text-indigo-600 text-2xl mb-2"
-                      }
-                    },
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "Shop",
-                        "className": "font-medium text-gray-700"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "type": "Card",
-                  "props": {
-                    "className": "bg-white rounded-lg p-4 text-center shadow-sm hover:shadow-md transition-shadow",
-                    "rounded": "lg"
-                  },
-                  "children": [
-                    {
-                      "type": "Icon",
-                      "props": {
-                        "name": "heart",
-                        "className": "text-red-500 text-2xl mb-2"
-                      }
-                    },
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "Wishlist",
-                        "className": "font-medium text-gray-700"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "type": "Card",
-                  "props": {
-                    "className": "bg-white rounded-lg p-4 text-center shadow-sm hover:shadow-md transition-shadow",
-                    "rounded": "lg"
-                  },
-                  "children": [
-                    {
-                      "type": "Icon",
-                      "props": {
-                        "name": "star",
-                        "className": "text-yellow-400 text-2xl mb-2"
-                      }
-                    },
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "Reviews",
-                        "className": "font-medium text-gray-700"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "type": "Card",
-                  "props": {
-                    "className": "bg-white rounded-lg p-4 text-center shadow-sm hover:shadow-md transition-shadow",
-                    "rounded": "lg"
-                  },
-                  "children": [
-                    {
-                      "type": "Icon",
-                      "props": {
-                        "name": "blog",
-                        "className": "text-green-400 text-2xl mb-2"
-                      }
-                    },
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "Blog",
-                        "className": "font-medium text-gray-700"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "Section",
-          "props": {
-            "padding": 8,
-            "className": "bg-indigo-50"
-          },
-          "children": [
-            {
-              "type": "Heading",
-              "props": {
-                "children": "New Arrivals",
-                "level": 2,
-                "className": "text-2xl font-bold text-gray-800 mb-6"
-              }
-            },
-            {
-              "type": "Grid",
-              "props": {
-                "cols": 4,
-                "gap": 4
-              },
-              "children": [
-                {
-                  "type": "Card",
-                  "props": {
-                    "className": "bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow",
-                    "rounded": "lg",
-                    "border": "gray-100"
-                  },
-                  "children": [
-                    {
-                      "type": "Image",
-                      "props": {
-                        "src": "/images/new-arrival1.jpg",
-                        "alt": "New Arrival 1",
-                        "className": "w-full h-48 object-cover rounded-t-lg"
-                      }
-                    },
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "Summer Dress",
-                        "className": "p-4 font-medium text-gray-700"
-                      }
-                    },
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "$59.99",
-                        "className": "p-4 font-bold text-indigo-600"
+                        "size": 3,
+                        "color": "text-indigo-600"
                       }
                     },
                     {
@@ -514,253 +196,17 @@
                           "type": "Badge",
                           "props": {
                             "children": "New",
-                            "variant": "new",
-                            "size": "sm",
-                            "className": "absolute top-2 right-2"
-                          }
-                        },
-                        {
-                          "type": "SubmitButton",
-                          "props": {
-                            "children": "Add to Cart",
-                            "variant": "primary",
-                            "size": "sm",
-                            "className": "w-full bg-indigo-600 text-white py-2 rounded"
-                          }
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "Card",
-                  "props": {
-                    "className": "bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow",
-                    "rounded": "lg",
-                    "border": "gray-100"
-                  },
-                  "children": [
-                    {
-                      "type": "Image",
-                      "props": {
-                        "src": "/images/new-arrival2.jpg",
-                        "alt": "New Arrival 2",
-                        "className": "w-full h-48 object-cover rounded-t-lg"
-                      }
-                    },
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "Running Shoes",
-                        "className": "p-4 font-medium text-gray-700"
-                      }
-                    },
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "$89.99",
-                        "className": "p-4 font-bold text-indigo-600"
-                      }
-                    },
-                    {
-                      "type": "FlexRow",
-                      "props": {
-                        "justify": "center",
-                        "gap": 2
-                      },
-                      "children": [
-                        {
-                          "type": "Badge",
-                          "props": {
-                            "children": "Popular",
-                            "variant": "popular",
-                            "size": "sm",
-                            "className": "absolute top-2 right-2"
-                          }
-                        },
-                        {
-                          "type": "SubmitButton",
-                          "props": {
-                            "children": "Add to Cart",
                             "variant": "secondary",
+                            "size": "sm"
+                          }
+                        },
+                        {
+                          "type": "SubmitButton",
+                          "props": {
+                            "children": "Add to Cart",
+                            "variant": "primary",
                             "size": "sm",
-                            "className": "w-full bg-gray-200 text-gray-800 py-2 rounded"
-                          }
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Product",
-      "layout": [
-        {
-          "type": "Hero",
-          "props": {
-            "title": "Premium Products",
-            "subtitle": "Explore Our Collection",
-            "className": "text-center py-24 bg-indigo-600 text-white"
-          }
-        },
-        {
-          "type": "Section",
-          "props": {
-            "className": "container mx-auto px-4 py-12"
-          },
-          "children": [
-            {
-              "type": "Heading",
-              "props": {
-                "children": "Featured Categories",
-                "level": 2,
-                "className": "text-2xl font-bold text-indigo-700 mb-6"
-              }
-            },
-            {
-              "type": "FlexRow",
-              "props": {
-                "className": "justify-center gap-4"
-              },
-              "children": [
-                {
-                  "type": "Card",
-                  "props": {
-                    "className": "bg-white rounded-lg shadow-md p-4 flex flex-col items-center hover:shadow-xl transition-shadow"
-                  },
-                  "children": [
-                    {
-                      "type": "Image",
-                      "props": {
-                        "src": "/images/categories/electronics.jpg",
-                        "alt": "Electronics",
-                        "className": "w-full h-48 object-cover rounded-md mb-2"
-                      }
-                    },
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "Electronics",
-                        "className": "text-lg font-medium text-gray-700"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "type": "Card",
-                  "props": {
-                    "className": "bg-white rounded-lg shadow-md p-4 flex flex-col items-center hover:shadow-xl transition-shadow"
-                  },
-                  "children": [
-                    {
-                      "type": "Image",
-                      "props": {
-                        "src": "/images/categories/fashion.jpg",
-                        "alt": "Fashion",
-                        "className": "w-full h-48 object-cover rounded-md mb-2"
-                      }
-                    },
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "Fashion",
-                        "className": "text-lg font-medium text-gray-700"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "type": "Card",
-                  "props": {
-                    "className": "bg-white rounded-lg shadow-md p-4 flex flex-col items-center hover:shadow-xl transition-shadow"
-                  },
-                  "children": [
-                    {
-                      "type": "Image",
-                      "props": {
-                        "src": "/images/categories/home.jpg",
-                        "alt": "Home & Kitchen",
-                        "className": "w-full h-48 object-cover rounded-md mb-2"
-                      }
-                    },
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "Home & Kitchen",
-                        "className": "text-lg font-medium text-gray-700"
-                      }
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "Heading",
-              "props": {
-                "children": "Latest Arrivals",
-                "level": 2,
-                "className": "text-2xl font-bold text-indigo-700 mb-6"
-              }
-            },
-            {
-              "type": "Grid",
-              "props": {
-                "cols": 3,
-                "gap": 6,
-                "className": "grid"
-              },
-              "children": [
-                {
-                  "type": "Card",
-                  "props": {
-                    "className": "bg-white rounded-lg shadow-md p-4 flex flex-col h-full hover:shadow-xl transition-shadow"
-                  },
-                  "children": [
-                    {
-                      "type": "Image",
-                      "props": {
-                        "src": "/images/products/phone.jpg",
-                        "alt": "Smartphone",
-                        "className": "w-full h-48 object-cover rounded-md mb-3"
-                      }
-                    },
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "Smartphone Pro",
-                        "className": "text-lg font-semibold text-gray-700 mb-1"
-                      }
-                    },
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "$699.99",
-                        "className": "text-xl font-bold text-indigo-600 mb-2"
-                      }
-                    },
-                    {
-                      "type": "FlexColumn",
-                      "props": {
-                        "className": "mt-auto flex-1 flex flex-col items-center gap-2"
-                      },
-                      "children": [
-                        {
-                          "type": "Badge",
-                          "props": {
-                            "children": "New",
-                            "className": "bg-indigo-100 text-indigo-800 text-xs rounded px-2 py-1"
-                          }
-                        },
-                        {
-                          "type": "TextBlock",
-                          "props": {
-                            "children": "Free Shipping",
-                            "className": "text-sm text-gray-500"
+                            "fullWidth": true
                           }
                         }
                       ]
@@ -770,101 +216,121 @@
                 {
                   "type": "Card",
                   "props": {
-                    "className": "bg-white rounded-lg shadow-md p-4 flex flex-col h-full hover:shadow-xl transition-shadow"
+                    "className": "bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow",
+                    "rounded": "lg",
+                    "border": "border-gray-100"
                   },
                   "children": [
                     {
                       "type": "Image",
                       "props": {
-                        "src": "/images/products/laptop.jpg",
-                        "alt": "Laptop",
-                        "className": "w-full h-48 object-cover rounded-md mb-3"
+                        "src": "/images/impact-wrench.jpg",
+                        "alt": "Impact Wrench",
+                        "width": 300,
+                        "height": 200,
+                        "rounded": "md"
                       }
                     },
                     {
                       "type": "TextBlock",
                       "props": {
-                        "children": "UltraBook 14\"",
-                        "className": "text-lg font-semibold text-gray-700 mb-1"
-                      }
-                    },
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "$1,199.99",
-                        "className": "text-xl font-bold text-indigo-600 mb-2"
-                      }
-                    },
-                    {
-                      "type": "FlexColumn",
-                      "props": {
-                        "className": "mt-auto flex-1 flex flex-col items-center gap-2"
-                      },
-                      "children": [
-                        {
-                          "type": "Badge",
-                          "props": {
-                            "children": "In Stock",
-                            "className": "bg-green-100 text-green-800 text-xs rounded px-2 py-1"
-                          }
-                        },
-                        {
-                          "type": "TextBlock",
-                          "props": {
-                            "children": "Fast Delivery",
-                            "className": "text-sm text-gray-500"
-                          }
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "Card",
-                  "props": {
-                    "className": "bg-white rounded-lg shadow-md p-4 flex flex-col h-full hover:shadow-xl transition-shadow"
-                  },
-                  "children": [
-                    {
-                      "type": "Image",
-                      "props": {
-                        "src": "/images/products/headphones.jpg",
-                        "alt": "Wireless Headphones",
-                        "className": "w-full h-48 object-cover rounded-md mb-3"
-                      }
-                    },
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "Premium Headphones",
-                        "className": "text-lg font-semibold text-gray-700 mb-1"
+                        "children": "Impact Wrench",
+                        "size": 2,
+                        "color": "text-gray-900"
                       }
                     },
                     {
                       "type": "TextBlock",
                       "props": {
                         "children": "$199.99",
-                        "className": "text-xl font-bold text-indigo-600 mb-2"
+                        "size": 3,
+                        "color": "text-indigo-600"
                       }
                     },
                     {
-                      "type": "FlexColumn",
+                      "type": "FlexRow",
                       "props": {
-                        "className": "mt-auto flex-1 flex flex-col items-center gap-2"
+                        "justify": "center",
+                        "gap": 2
                       },
                       "children": [
                         {
                           "type": "Badge",
                           "props": {
                             "children": "Best Seller",
-                            "className": "bg-purple-100 text-purple-800 text-xs rounded px-2 py-1"
+                            "variant": "primary",
+                            "size": "sm"
                           }
                         },
                         {
-                          "type": "TextBlock",
+                          "type": "SubmitButton",
                           "props": {
-                            "children": "4.8 \u2605 (1,243)",
-                            "className": "text-sm text-gray-500"
+                            "children": "Add to Cart",
+                            "variant": "primary",
+                            "size": "sm",
+                            "fullWidth": true
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "Card",
+                  "props": {
+                    "className": "bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow",
+                    "rounded": "lg",
+                    "border": "border-gray-100"
+                  },
+                  "children": [
+                    {
+                      "type": "Image",
+                      "props": {
+                        "src": "/images/laser-level.jpg",
+                        "alt": "Laser Level",
+                        "width": 300,
+                        "height": 200,
+                        "rounded": "md"
+                      }
+                    },
+                    {
+                      "type": "TextBlock",
+                      "props": {
+                        "children": "Laser Level",
+                        "size": 2,
+                        "color": "text-gray-900"
+                      }
+                    },
+                    {
+                      "type": "TextBlock",
+                      "props": {
+                        "children": "$89.99",
+                        "size": 3,
+                        "color": "text-indigo-600"
+                      }
+                    },
+                    {
+                      "type": "FlexRow",
+                      "props": {
+                        "justify": "center",
+                        "gap": 2
+                      },
+                      "children": [
+                        {
+                          "type": "Badge",
+                          "props": {
+                            "children": "Clearance",
+                            "variant": "secondary",
+                            "size": "sm"
+                          }
+                        },
+                        {
+                          "type": "SubmitButton",
+                          "props": {
+                            "children": "Add to Cart",
+                            "variant": "primary",
+                            "size": "sm",
+                            "fullWidth": true
                           }
                         }
                       ]
@@ -872,160 +338,378 @@
                   ]
                 }
               ]
+            }
+          ]
+        },
+        {
+          "type": "Section",
+          "props": {
+            "className": "bg-indigo-50 py-16"
+          },
+          "children": [
+            {
+              "type": "Heading",
+              "props": {
+                "children": "Why Choose Modern Gear",
+                "level": 2,
+                "align": "center",
+                "color": "text-gray-800"
+              }
             },
+            {
+              "type": "FlexColumn",
+              "props": {
+                "align": "center",
+                "justify": "center",
+                "gap": 8
+              },
+              "children": [
+                {
+                  "type": "StatsCard",
+                  "props": {
+                    "title": "Premium Quality",
+                    "value": "100%",
+                    "icon": "Check",
+                    "change": "+15%",
+                    "description": "Rigorous quality control"
+                  }
+                },
+                {
+                  "type": "StatsCard",
+                  "props": {
+                    "title": "Fast Shipping",
+                    "value": "2 Days",
+                    "icon": "ArrowRight",
+                    "change": "+20%",
+                    "description": "Free shipping over $75"
+                  }
+                },
+                {
+                  "type": "StatsCard",
+                  "props": {
+                    "title": "Secure Payment",
+                    "value": "100% Secure",
+                    "icon": "Lock",
+                    "change": "+30%",
+                    "description": "Multiple payment options"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "Section",
+          "props": {
+            "className": "py-12"
+          },
+          "children": [
             {
               "type": "Heading",
               "props": {
                 "children": "Customer Reviews",
                 "level": 2,
-                "className": "text-2xl font-bold text-indigo-700 mb-6"
+                "align": "center",
+                "color": "text-gray-800"
               }
             },
             {
-              "type": "Container",
+              "type": "Testimonials",
               "props": {
-                "className": "mx-auto max-w-5xl"
-              },
-              "children": [
-                {
-                  "type": "FeatureGrid",
-                  "props": {
-                    "className": "grid grid-cols-1 md:grid-cols-3 gap-6"
+                "testimonials": [
+                  {
+                    "author": "James R.",
+                    "rating": 5,
+                    "text": "The impact wrench exceeded my expectations - powerful and reliable. Perfect for my workshop.",
+                    "image": "/images/james.jpg"
                   },
-                  "children": [
-                    {
-                      "type": "FeatureCard",
-                      "props": {
-                        "title": "Excellent Quality",
-                        "description": "The products exceed my expectations in quality and durability.",
-                        "icon": "star",
-                        "variant": "solid",
-                        "className": "bg-white p-4 rounded-lg shadow-md text-center"
-                      }
-                    },
-                    {
-                      "type": "FeatureCard",
-                      "props": {
-                        "title": "Fast Shipping",
-                        "description": "Orders arrive faster than promised with real-time tracking.",
-                        "icon": "truck",
-                        "variant": "outline",
-                        "className": "bg-white p-4 rounded-lg shadow-md text-center"
-                      }
-                    },
-                    {
-                      "type": "FeatureCard",
-                      "props": {
-                        "title": "Easy Returns",
-                        "description": "Hassle-free returns within 30 days if you're not completely satisfied.",
-                        "icon": "undo",
-                        "variant": "solid",
-                        "className": "bg-white p-4 rounded-lg shadow-md text-center"
-                      }
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "CTASection",
-              "props": {
-                "title": "Ready to Upgrade Your Lifestyle?",
-                "description": "Join thousands of satisfied customers who've transformed their daily routines.",
-                "primaryButton": {
-                  "label": "Shop Now",
-                  "href": "/shop",
-                  "variant": "solid",
-                  "size": "lg",
-                  "className": "bg-indigo-600 hover:bg-indigo-700 text-white"
-                },
-                "secondaryButton": {
-                  "label": "Watch Our Collection",
-                  "href": "/blog",
-                  "variant": "outline",
-                  "size": "lg",
-                  "className": "border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50"
-                },
-                "className": "bg-indigo-50 py-16 text-center",
-                "textColor": "text-indigo-800"
-              }
-            },
-            {
-              "type": "Section",
-              "props": {
-                "className": "bg-gray-50 py-16"
-              },
-              "children": [
-                {
-                  "type": "Heading",
-                  "props": {
-                    "children": "Read Our Latest Blog Posts",
-                    "level": 2,
-                    "className": "text-2xl font-bold text-indigo-700 mb-8"
+                  {
+                    "author": "Michael T.",
+                    "rating": 4,
+                    "text": "Laser level saved me hours on my renovation. Highly accurate and easy to use.",
+                    "image": "/images/michael.jpg"
                   }
-                },
+                ],
+                "className": "space-y-6",
+                "columns": 1,
+                "autoplay": true,
+                "autoplaySpeed": 5000
+              }
+            }
+          ]
+        },
+        {
+          "type": "CTASection",
+          "props": {
+            "title": "Ready to Upgrade Your Workshop?",
+            "description": "Join thousands of professionals who trust Modern Gear for their projects",
+            "primaryButton": {
+              "type": "SubmitButton",
+              "props": {
+                "children": "Browse Products",
+                "variant": "primary",
+                "size": "lg",
+                "fullWidth": true
+              }
+            },
+            "secondaryButton": {
+              "type": "SubmitButton",
+              "props": {
+                "children": "Watch Video Testimonials",
+                "variant": "secondary",
+                "size": "lg",
+                "fullWidth": true
+              }
+            },
+            "className": "bg-indigo-600 text-white text-center py-16",
+            "background": "bg-indigo-600",
+            "textColor": "text-white",
+            "align": "center"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "layout": [
+        {
+          "type": "Hero",
+          "props": {
+            "title": "Modern Gear Collection",
+            "subtitle": "Premium equipment for discerning professionals",
+            "className": "text-center py-12"
+          }
+        },
+        {
+          "type": "Section",
+          "props": {
+            "className": "bg-gray-50 py-8"
+          },
+          "children": [
+            {
+              "type": "Heading",
+              "props": {
+                "children": "Featured Products",
+                "level": 2,
+                "color": "text-indigo-700",
+                "align": "text-left"
+              }
+            },
+            {
+              "type": "Grid",
+              "props": {
+                "cols": 3,
+                "gap": 4
+              },
+              "children": [
                 {
-                  "type": "FlexRow",
+                  "type": "Card",
                   "props": {
-                    "className": "justify-between items-start gap-6"
+                    "className": "bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow",
+                    "rounded": "lg",
+                    "border": "border-gray-100"
                   },
                   "children": [
                     {
-                      "type": "Card",
+                      "type": "Image",
                       "props": {
-                        "className": "bg-white rounded-lg shadow-md p-4 flex flex-col h-full"
+                        "src": "/images/product1.jpg",
+                        "alt": "Professional Drill Set",
+                        "width": 300,
+                        "height": 300,
+                        "rounded": "md",
+                        "objectFit": "contain"
+                      }
+                    },
+                    {
+                      "type": "Heading",
+                      "props": {
+                        "children": "Pro Drill Set",
+                        "level": 4,
+                        "color": "text-gray-800"
+                      }
+                    },
+                    {
+                      "type": "TextBlock",
+                      "props": {
+                        "children": "$189.99",
+                        "size": 2,
+                        "color": "text-indigo-600"
+                      }
+                    },
+                    {
+                      "type": "FlexRow",
+                      "props": {
+                        "align": "center",
+                        "justify": "between",
+                        "gap": 2
                       },
                       "children": [
                         {
-                          "type": "Image",
+                          "type": "Badge",
                           "props": {
-                            "src": "/images/blog/seo-tips.jpg",
-                            "alt": "SEO Tips",
-                            "className": "h-48 rounded-md mb-3"
-                          }
-                        },
-                        {
-                          "type": "TextBlock",
-                          "props": {
-                            "children": "Mastering SEO for E-Commerce",
-                            "className": "text-lg font-semibold text-gray-700 mb-1"
-                          }
-                        },
-                        {
-                          "type": "TextBlock",
-                          "props": {
-                            "children": "April 15, 2025 \u2022 5 min read",
-                            "className": "text-sm text-gray-500 mb-2"
-                          }
-                        },
-                        {
-                          "type": "TextBlock",
-                          "props": {
-                            "children": "Discover proven strategies to improve your online store's visibility and attract more organic traffic.",
-                            "className": "text-gray-600 flex-1"
+                            "children": "Best Seller",
+                            "variant": "secondary",
+                            "size": "sm"
                           }
                         },
                         {
                           "type": "FlexColumn",
                           "props": {
-                            "className": "mt-auto flex flex-col items-center gap-2"
+                            "align": "center",
+                            "justify": "center"
                           },
                           "children": [
                             {
-                              "type": "Badge",
+                              "type": "TextBlock",
                               "props": {
-                                "children": "New",
-                                "className": "bg-indigo-100 text-indigo-800 text-xs rounded px-2 py-1"
+                                "children": "4.8 \u2605",
+                                "size": 1,
+                                "color": "text-yellow-400"
                               }
-                            },
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "Card",
+                  "props": {
+                    "className": "bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow",
+                    "rounded": "lg",
+                    "border": "border-gray-100"
+                  },
+                  "children": [
+                    {
+                      "type": "Image",
+                      "props": {
+                        "src": "/images/product2.jpg",
+                        "alt": "Smart Impact Driver",
+                        "width": 300,
+                        "height": 300,
+                        "rounded": "md",
+                        "objectFit": "contain"
+                      }
+                    },
+                    {
+                      "type": "Heading",
+                      "props": {
+                        "children": "Smart Impact Driver",
+                        "level": 4,
+                        "color": "text-gray-800"
+                      }
+                    },
+                    {
+                      "type": "TextBlock",
+                      "props": {
+                        "children": "$149.99",
+                        "size": 2,
+                        "color": "text-indigo-600"
+                      }
+                    },
+                    {
+                      "type": "FlexRow",
+                      "props": {
+                        "align": "center",
+                        "justify": "between",
+                        "gap": 2
+                      },
+                      "children": [
+                        {
+                          "type": "Badge",
+                          "props": {
+                            "children": "New",
+                            "variant": "secondary",
+                            "size": "sm"
+                          }
+                        },
+                        {
+                          "type": "FlexColumn",
+                          "props": {
+                            "align": "center",
+                            "justify": "center"
+                          },
+                          "children": [
                             {
-                              "type": "SubmitButton",
+                              "type": "TextBlock",
                               "props": {
-                                "label": "Read More",
-                                "href": "/blog/seo-tips",
-                                "variant": "outline",
-                                "size": "sm",
-                                "className": "border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50"
+                                "children": "4.6 \u2605",
+                                "size": 1,
+                                "color": "text-yellow-400"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "Card",
+                  "props": {
+                    "className": "bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow",
+                    "rounded": "lg",
+                    "border": "border-gray-100"
+                  },
+                  "children": [
+                    {
+                      "type": "Image",
+                      "props": {
+                        "src": "/images/product3.jpg",
+                        "alt": "Multi-tool Kit",
+                        "width": 300,
+                        "height": 300,
+                        "rounded": "md",
+                        "objectFit": "contain"
+                      }
+                    },
+                    {
+                      "type": "Heading",
+                      "props": {
+                        "children": "Multi-tool Kit",
+                        "level": 4,
+                        "color": "text-gray-800"
+                      }
+                    },
+                    {
+                      "type": "TextBlock",
+                      "props": {
+                        "children": "$89.99",
+                        "size": 2,
+                        "color": "text-indigo-600"
+                      }
+                    },
+                    {
+                      "type": "FlexRow",
+                      "props": {
+                        "align": "center",
+                        "justify": "between",
+                        "gap": 2
+                      },
+                      "children": [
+                        {
+                          "type": "Badge",
+                          "props": {
+                            "children": "Top Rated",
+                            "variant": "secondary",
+                            "size": "sm"
+                          }
+                        },
+                        {
+                          "type": "FlexColumn",
+                          "props": {
+                            "align": "center",
+                            "justify": "center"
+                          },
+                          "children": [
+                            {
+                              "type": "TextBlock",
+                              "props": {
+                                "children": "4.9 \u2605",
+                                "size": 1,
+                                "color": "text-yellow-400"
                               }
                             }
                           ]
@@ -1037,233 +721,148 @@
               ]
             }
           ]
-        }
-      ]
-    },
-    {
-      "name": "Cart",
-      "layout": [
-        {
-          "type": "Hero",
-          "props": {
-            "title": "Shopping Cart",
-            "subtitle": "Manage your items",
-            "className": "text-center py-12"
-          }
         },
         {
           "type": "Section",
           "props": {
-            "padding": 8,
-            "className": "bg-white"
+            "className": "bg-indigo-50 py-12"
           },
           "children": [
+            {
+              "type": "Heading",
+              "props": {
+                "children": "Need Help?",
+                "level": 2,
+                "color": "text-white",
+                "align": "text-center"
+              }
+            },
             {
               "type": "FlexColumn",
               "props": {
                 "align": "center",
                 "justify": "center",
-                "gap": 4
+                "gap": 3
               },
               "children": [
                 {
                   "type": "TextBlock",
                   "props": {
-                    "children": "Your Shopping Cart",
-                    "size": "xl",
-                    "align": "center",
-                    "color": "indigo.600"
+                    "children": "Have questions about our products? Our expert team is ready to assist you.",
+                    "size": 1,
+                    "color": "text-gray-200"
                   }
                 },
                 {
-                  "type": "TextBlock",
+                  "type": "FlexRow",
                   "props": {
-                    "children": "Review and checkout your items",
-                    "size": "lg",
                     "align": "center",
-                    "color": "gray.600"
-                  }
-                }
-              ]
-            },
-            {
-              "type": "Section",
-              "props": {
-                "padding": 6,
-                "className": "bg-gray-50"
-              },
-              "children": [
-                {
-                  "type": "Grid",
-                  "props": {
-                    "cols": 1,
-                    "className": "w-full"
+                    "justify": "center",
+                    "gap": 2
                   },
                   "children": [
                     {
-                      "type": "FlexRow",
+                      "type": "SubmitButton",
                       "props": {
-                        "align": "start",
-                        "justify": "space-between",
-                        "gap": 4,
-                        "className": "items-start"
-                      },
-                      "children": [
-                        {
-                          "type": "TextBlock",
-                          "props": {
-                            "children": "Item",
-                            "size": "md",
-                            "color": "gray.800",
-                            "align": "left"
-                          }
-                        },
-                        {
-                          "type": "TextBlock",
-                          "props": {
-                            "children": "Product",
-                            "size": "md",
-                            "color": "gray.800",
-                            "align": "left"
-                          }
-                        },
-                        {
-                          "type": "TextBlock",
-                          "props": {
-                            "children": "Price",
-                            "size": "md",
-                            "color": "gray.800",
-                            "align": "left"
-                          }
-                        },
-                        {
-                          "type": "TextBlock",
-                          "props": {
-                            "children": "Total",
-                            "size": "md",
-                            "color": "gray.800",
-                            "align": "left"
-                          }
-                        },
-                        {
-                          "type": "TextBlock",
-                          "props": {
-                            "children": "Remove",
-                            "size": "md",
-                            "color": "gray.800",
-                            "align": "left"
-                          }
-                        }
-                      ]
+                        "children": "Contact Support",
+                        "variant": "ghost",
+                        "size": "lg",
+                        "className": "text-indigo-600 hover:text-indigo-400"
+                      }
                     },
                     {
-                      "type": "Grid",
+                      "type": "SubmitButton",
                       "props": {
-                        "cols": 1,
-                        "className": "mt-4"
+                        "children": "View FAQ",
+                        "variant": "outline",
+                        "size": "lg",
+                        "className": "text-white hover:bg-indigo-600"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ShoppingCart",
+      "layout": [
+        {
+          "type": "Hero",
+          "props": {
+            "title": "Shopping Cart",
+            "subtitle": "Your selected items"
+          }
+        },
+        {
+          "type": "Section",
+          "props": {
+            "padding": 4
+          },
+          "children": [
+            {
+              "type": "Grid",
+              "props": {
+                "cols": 1
+              },
+              "children": [
+                {
+                  "type": "Card",
+                  "props": {
+                    "className": "bg-white shadow-md rounded-lg p-4 mb-4",
+                    "shadow": "md",
+                    "rounded": "lg"
+                  },
+                  "children": [
+                    {
+                      "type": "TextBlock",
+                      "props": {
+                        "children": "Items in Your Cart",
+                        "size": "lg",
+                        "color": "text-gray-800"
+                      }
+                    },
+                    {
+                      "type": "FlexColumn",
+                      "props": {
+                        "align": "baseline",
+                        "justify": "space-y-2"
                       },
                       "children": [
-                        {
-                          "type": "FlexColumn",
-                          "props": {
-                            "align": "stretch",
-                            "justify": "center",
-                            "gap": 4,
-                            "className": "space-y-4"
-                          },
-                          "children": [
-                            {
-                              "type": "FlexRow",
-                              "props": {
-                                "align": "center",
-                                "justify": "flex-start",
-                                "gap": 3,
-                                "className": "items-center"
-                              },
-                              "children": [
-                                {
-                                  "type": "Image",
-                                  "props": {
-                                    "src": "/placeholder-product.jpg",
-                                    "alt": "Product Image",
-                                    "className": "w-16 h-16 rounded-lg",
-                                    "objectFit": "contain"
-                                  }
-                                },
-                                {
-                                  "type": "FlexColumn",
-                                  "props": {
-                                    "className": "flex-1"
-                                  },
-                                  "children": [
-                                    {
-                                      "type": "TextBlock",
-                                      "props": {
-                                        "children": "Product Name",
-                                        "size": "lg",
-                                        "color": "gray.900",
-                                        "align": "left"
-                                      }
-                                    },
-                                    {
-                                      "type": "TextBlock",
-                                      "props": {
-                                        "children": "$199.99",
-                                        "size": "md",
-                                        "color": "indigo.600",
-                                        "align": "left"
-                                      }
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "TextBlock",
-                                  "props": {
-                                    "children": "1",
-                                    "size": "md",
-                                    "color": "gray.500",
-                                    "align": "center"
-                                  }
-                                },
-                                {
-                                  "type": "TextBlock",
-                                  "props": {
-                                    "children": "$199.99",
-                                    "size": "md",
-                                    "color": "indigo.600",
-                                    "align": "right"
-                                  }
-                                }
-                              ]
-                            },
-                            {
-                              "type": "TextBlock",
-                              "props": {
-                                "children": "Remove",
-                                "size": "sm",
-                                "color": "indigo.600",
-                                "align": "right",
-                                "className": "cursor-pointer hover:text-indigo-500"
-                              }
-                            }
-                          ]
-                        },
                         {
                           "type": "FlexRow",
                           "props": {
                             "align": "center",
-                            "justify": "space-between",
-                            "gap": 2,
-                            "className": "items-center"
+                            "justify": "space-x-3"
                           },
                           "children": [
                             {
+                              "type": "Image",
+                              "props": {
+                                "src": "/placeholder-image.jpg",
+                                "alt": "Product Image",
+                                "width": 64,
+                                "height": 64,
+                                "rounded": "md"
+                              }
+                            },
+                            {
                               "type": "TextBlock",
                               "props": {
-                                "children": "Subtotal:",
-                                "size": "lg",
-                                "color": "gray.800",
-                                "align": "left"
+                                "children": "Product Name",
+                                "size": "md",
+                                "color": "text-gray-700"
+                              }
+                            },
+                            {
+                              "type": "TextBlock",
+                              "props": {
+                                "children": "3",
+                                "size": "md",
+                                "color": "text-gray-500"
                               }
                             },
                             {
@@ -1271,55 +870,65 @@
                               "props": {
                                 "children": "$199.99",
                                 "size": "lg",
-                                "color": "indigo.600",
-                                "align": "right"
+                                "color": "text-indigo-600"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "type": "FlexRow",
+                          "props": {
+                            "align": "baseline",
+                            "justify": "space-x-3"
+                          },
+                          "children": [
+                            {
+                              "type": "TextBlock",
+                              "props": {
+                                "children": "Subtotal:",
+                                "size": "md",
+                                "color": "text-gray-700"
+                              }
+                            },
+                            {
+                              "type": "TextBlock",
+                              "props": {
+                                "children": "$599.97",
+                                "size": "lg",
+                                "color": "text-indigo-600"
                               }
                             }
                           ]
                         }
                       ]
+                    },
+                    {
+                      "type": "FlexColumn",
+                      "props": {
+                        "className": "mt-4"
+                      },
+                      "children": [
+                        {
+                          "type": "SubmitButton",
+                          "props": {
+                            "children": "Continue Shopping",
+                            "variant": "secondary",
+                            "size": "lg",
+                            "className": "w-full text-indigo-600 border border-indigo-600 rounded-md py-2"
+                          }
+                        },
+                        {
+                          "type": "SubmitButton",
+                          "props": {
+                            "children": "Proceed to Checkout",
+                            "variant": "primary",
+                            "size": "lg",
+                            "className": "w-full text-white bg-indigo-600 rounded-md py-2 hover:bg-indigo-700"
+                          }
+                        }
+                      ]
                     }
                   ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "Section",
-          "props": {
-            "padding": 8,
-            "className": "bg-white"
-          },
-          "children": [
-            {
-              "type": "FlexRow",
-              "props": {
-                "align": "center",
-                "justify": "flex-end",
-                "gap": 2,
-                "className": "w-full"
-              },
-              "children": [
-                {
-                  "type": "TextBlock",
-                  "props": {
-                    "children": "Continue Shopping",
-                    "size": "lg",
-                    "color": "indigo.600",
-                    "className": "hover:text-indigo-500 cursor-pointer"
-                  }
-                },
-                {
-                  "type": "SubmitButton",
-                  "props": {
-                    "children": "Checkout",
-                    "variant": "solid",
-                    "size": "lg",
-                    "fullWidth": true,
-                    "className": "bg-indigo-600 text-white hover:bg-indigo-700",
-                    "disabled": false
-                  }
                 }
               ]
             }
@@ -1344,559 +953,250 @@
           },
           "children": [
             {
-              "type": "FlexColumn",
-              "props": {
-                "align": "center",
-                "justify": "center",
-                "gap": 2
-              },
-              "children": [
-                {
-                  "type": "TextBlock",
-                  "props": {
-                    "children": "Shipping Information",
-                    "size": "md",
-                    "color": "indigo.600"
-                  }
-                },
-                {
-                  "type": "FlexRow",
-                  "props": {
-                    "align": "baseline",
-                    "justify": "space-between"
-                  },
-                  "children": [
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "Address"
-                      }
-                    },
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "Shipping Method"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "type": "FlexRow",
-                  "props": {
-                    "align": "baseline",
-                    "justify": "space-between"
-                  },
-                  "children": [
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "Payment"
-                      }
-                    },
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "Payment Method"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "type": "FlexRow",
-                  "props": {
-                    "align": "baseline",
-                    "justify": "space-between"
-                  },
-                  "children": [
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "Review"
-                      }
-                    },
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "Order Summary"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "type": "FlexColumn",
-                  "props": {
-                    "align": "stretch",
-                    "justify": "flex-end",
-                    "gap": 2
-                  },
-                  "children": [
-                    {
-                      "type": "SubmitButton",
-                      "props": {
-                        "loading": false,
-                        "variant": "solid",
-                        "size": "lg",
-                        "fullWidth": true,
-                        "disabled": false,
-                        "children": "Place Order",
-                        "onClick": "handleSubmit",
-                        "type": "submit"
-                      }
-                    },
-                    {
-                      "type": "FlexRow",
-                      "props": {
-                        "align": "center",
-                        "justify": "center",
-                        "gap": 1
-                      },
-                      "children": [
-                        {
-                          "type": "TextBlock",
-                          "props": {
-                            "children": "Already have an account? "
-                          }
-                        },
-                        {
-                          "type": "SubmitButton",
-                          "props": {
-                            "loading": false,
-                            "variant": "outline",
-                            "size": "lg",
-                            "fullWidth": false,
-                            "disabled": false,
-                            "children": "Login",
-                            "onClick": "handleLogin",
-                            "type": "button"
-                          }
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "UserAccount",
-      "layout": [
-        {
-          "type": "Hero",
-          "props": {
-            "title": "My Account",
-            "subtitle": "Manage your purchases, preferences, and profile"
-          }
-        },
-        {
-          "type": "Section",
-          "props": {
-            "padding": 4
-          },
-          "children": [
-            {
-              "type": "FlexColumn",
-              "props": {
-                "align": "center",
-                "justify": "center"
-              },
-              "children": [
-                {
-                  "type": "Heading",
-                  "props": {
-                    "children": "Welcome Back!",
-                    "level": 1,
-                    "color": "primary",
-                    "align": "center"
-                  }
-                },
-                {
-                  "type": "TextBlock",
-                  "props": {
-                    "children": "Explore your order history, manage your wishlist, update your profile, and more.",
-                    "size": "md",
-                    "color": "text-gray-600",
-                    "align": "center"
-                  }
-                }
-              ]
-            },
-            {
-              "type": "Grid",
-              "props": {
-                "cols": 2
-              },
-              "children": [
-                {
-                  "type": "Container",
-                  "props": {
-                    "maxWidth": 3,
-                    "padding": 4
-                  },
-                  "children": [
-                    {
-                      "type": "Section",
-                      "props": {
-                        "className": "bg-white rounded-lg shadow-md p-6"
-                      },
-                      "children": [
-                        {
-                          "type": "Heading",
-                          "props": {
-                            "children": "Order History",
-                            "level": 2,
-                            "color": "primary"
-                          }
-                        },
-                        {
-                          "type": "Table",
-                          "props": {
-                            "columns": [
-                              {
-                                "header": "Order ID",
-                                "accessor": "id"
-                              },
-                              {
-                                "header": "Date",
-                                "accessor": "date"
-                              },
-                              {
-                                "header": "Status",
-                                "accessor": "status"
-                              },
-                              {
-                                "header": "Total",
-                                "accessor": "total"
-                              }
-                            ],
-                            "data": [],
-                            "striped": true,
-                            "hoverable": true,
-                            "bordered": true
-                          }
-                        }
-                      ]
-                    },
-                    {
-                      "type": "Section",
-                      "props": {
-                        "className": "bg-white rounded-lg shadow-md p-6"
-                      },
-                      "children": [
-                        {
-                          "type": "Heading",
-                          "props": {
-                            "children": "Wishlist",
-                            "level": 2,
-                            "color": "primary"
-                          }
-                        },
-                        {
-                          "type": "FlexColumn",
-                          "props": {
-                            "align": "start",
-                            "justify": "center",
-                            "gap": 3
-                          },
-                          "children": [
-                            {
-                              "type": "Badge",
-                              "props": {
-                                "children": "\ud83d\uded2",
-                                "variant": "default",
-                                "size": "lg",
-                                "rounded": "full"
-                              }
-                            },
-                            {
-                              "type": "Heading",
-                              "props": {
-                                "children": "Your Wishlist is empty",
-                                "level": 3,
-                                "color": "text-gray-500"
-                              }
-                            },
-                            {
-                              "type": "TextBlock",
-                              "props": {
-                                "children": "Add products to your wishlist to keep track of items you love.",
-                                "size": "sm",
-                                "color": "text-gray-400",
-                                "align": "center"
-                              }
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Wishlist",
-      "layout": [
-        {
-          "type": "Hero",
-          "props": {
-            "title": "My Wishlist",
-            "subtitle": "Your saved items"
-          }
-        },
-        {
-          "type": "Section",
-          "props": {
-            "padding": 4
-          },
-          "children": [
-            {
-              "type": "Container",
-              "props": {
-                "maxWidth": 3
-              },
-              "children": [
-                {
-                  "type": "Grid",
-                  "props": {
-                    "cols": 3
-                  },
-                  "children": []
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "ProductReviews",
-      "layout": [
-        {
-          "type": "Hero",
-          "props": {
-            "title": "Product Reviews",
-            "subtitle": "Share your experience"
-          }
-        },
-        {
-          "type": "Section",
-          "props": {
-            "padding": 4
-          },
-          "children": [
-            {
               "type": "Grid",
               "props": {
                 "cols": 1
               },
               "children": [
                 {
-                  "type": "Heading",
+                  "type": "Container",
                   "props": {
-                    "children": "Write a Review",
-                    "level": 2,
-                    "align": "left"
-                  }
-                },
-                {
-                  "type": "TextBlock",
-                  "props": {
-                    "children": "Help other shoppers make informed decisions by sharing your feedback on purchased products."
-                  }
-                },
-                {
-                  "type": "Grid",
-                  "props": {
-                    "cols": 2
+                    "maxWidth": 720,
+                    "padding": 4
                   },
                   "children": [
                     {
-                      "type": "Form",
-                      "props": {
-                        "onSubmit": "handleReviewSubmit",
-                        "className": "space-y-4"
-                      },
-                      "children": []
-                    },
-                    {
                       "type": "Heading",
                       "props": {
-                        "children": "Recent Reviews",
-                        "level": 3,
-                        "align": "left"
+                        "children": "Payment Information",
+                        "level": 2,
+                        "color": "text-gray-900"
                       }
                     },
                     {
-                      "type": "TextBlock",
+                      "type": "FlexColumn",
                       "props": {
-                        "children": "No reviews yet. Be the first to share your thoughts."
-                      }
-                    },
-                    {
-                      "type": "Section",
-                      "props": {
-                        "className": "mt-4"
+                        "align": "start",
+                        "justify": "center",
+                        "gap": 2
                       },
                       "children": [
                         {
                           "type": "TextBlock",
                           "props": {
-                            "children": "Filter by rating:",
-                            "align": "left"
+                            "children": "Order Summary",
+                            "size": "sm",
+                            "color": "text-gray-600"
+                          }
+                        },
+                        {
+                          "type": "TextBlock",
+                          "props": {
+                            "children": "Subtotal: $199.99",
+                            "size": "md",
+                            "color": "text-gray-900"
+                          }
+                        },
+                        {
+                          "type": "TextBlock",
+                          "props": {
+                            "children": "Shipping: $5.99",
+                            "size": "md",
+                            "color": "text-gray-900"
+                          }
+                        },
+                        {
+                          "type": "TextBlock",
+                          "props": {
+                            "children": "Total: $205.98",
+                            "size": "xl",
+                            "color": "text-indigo-600 font-bold"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "FlexColumn",
+                      "props": {
+                        "align": "start",
+                        "justify": "center",
+                        "gap": 2
+                      },
+                      "children": [
+                        {
+                          "type": "TextBlock",
+                          "props": {
+                            "children": "Payment Method",
+                            "size": "sm",
+                            "color": "text-gray-600"
+                          }
+                        },
+                        {
+                          "type": "SelectDropdown",
+                          "props": {
+                            "label": "Payment Method",
+                            "options": [
+                              {
+                                "label": "Credit Card",
+                                "value": "credit_card"
+                              },
+                              {
+                                "label": "PayPal",
+                                "value": "paypal"
+                              }
+                            ],
+                            "value": "credit_card",
+                            "className": "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                          }
+                        },
+                        {
+                          "type": "TextBlock",
+                          "props": {
+                            "children": "Card Details",
+                            "size": "sm",
+                            "color": "text-gray-600"
                           }
                         },
                         {
                           "type": "FlexRow",
                           "props": {
-                            "align": "flex-start",
+                            "wrap": true,
                             "gap": 2
                           },
                           "children": [
                             {
-                              "type": "Badge",
+                              "type": "InputField",
                               "props": {
-                                "children": "1",
-                                "variant": "outline",
-                                "size": "sm"
+                                "label": "Card Number",
+                                "placeholder": "1234 5678 9012 3456",
+                                "type": "text",
+                                "disabled": false
                               }
                             },
                             {
-                              "type": "Badge",
+                              "type": "InputField",
                               "props": {
-                                "children": "2",
-                                "variant": "outline",
-                                "size": "sm"
+                                "label": "Expiry",
+                                "placeholder": "MM/YY",
+                                "type": "text",
+                                "disabled": false
                               }
                             },
                             {
-                              "type": "Badge",
+                              "type": "InputField",
                               "props": {
-                                "children": "3",
-                                "variant": "outline",
-                                "size": "sm"
-                              }
-                            },
-                            {
-                              "type": "Badge",
-                              "props": {
-                                "children": "4",
-                                "variant": "outline",
-                                "size": "sm"
-                              }
-                            },
-                            {
-                              "type": "Badge",
-                              "props": {
-                                "children": "5",
-                                "variant": "solid",
-                                "size": "sm",
-                                "rounded": true
+                                "label": "CVC",
+                                "placeholder": "123",
+                                "type": "text",
+                                "disabled": false
                               }
                             }
                           ]
                         }
                       ]
+                    },
+                    {
+                      "type": "FlexColumn",
+                      "props": {
+                        "align": "start",
+                        "justify": "center",
+                        "gap": 2
+                      },
+                      "children": [
+                        {
+                          "type": "TextBlock",
+                          "props": {
+                            "children": "Billing Address",
+                            "size": "sm",
+                            "color": "text-gray-600"
+                          }
+                        },
+                        {
+                          "type": "InputField",
+                          "props": {
+                            "label": "Street Address",
+                            "placeholder": "123 Main Street",
+                            "type": "text",
+                            "disabled": false
+                          }
+                        },
+                        {
+                          "type": "InputField",
+                          "props": {
+                            "label": "City",
+                            "placeholder": "Seattle",
+                            "type": "text",
+                            "disabled": false
+                          }
+                        },
+                        {
+                          "type": "FlexRow",
+                          "props": {
+                            "gap": 2
+                          },
+                          "children": [
+                            {
+                              "type": "InputField",
+                              "props": {
+                                "label": "State",
+                                "placeholder": "WA",
+                                "type": "text",
+                                "disabled": false
+                              }
+                            },
+                            {
+                              "type": "InputField",
+                              "props": {
+                                "label": "ZIP",
+                                "placeholder": "98101",
+                                "type": "text",
+                                "disabled": false
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "type": "InputField",
+                          "props": {
+                            "label": "Country",
+                            "placeholder": "USA",
+                            "type": "text",
+                            "disabled": false
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "CTASection",
+                      "props": {
+                        "title": "Review Order",
+                        "description": "Check details before completing your purchase",
+                        "primaryButton": {
+                          "type": "SubmitButton",
+                          "props": {
+                            "children": "Place Order",
+                            "variant": "primary",
+                            "size": "lg",
+                            "fullWidth": true,
+                            "disabled": false
+                          }
+                        },
+                        "secondaryButton": {
+                          "type": "SubmitButton",
+                          "props": {
+                            "children": "Cancel",
+                            "variant": "secondary",
+                            "size": "lg",
+                            "fullWidth": true,
+                            "disabled": false
+                          }
+                        },
+                        "background": "white",
+                        "textColor": "gray-800",
+                        "align": "center"
+                      }
                     }
                   ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Blog",
-      "layout": [
-        {
-          "type": "Hero",
-          "props": {
-            "title": "Blog",
-            "subtitle": "Insights and Stories"
-          }
-        },
-        {
-          "type": "Section",
-          "props": {
-            "padding": 4
-          },
-          "children": [
-            {
-              "type": "Grid",
-              "props": {
-                "cols": 3
-              },
-              "children": [
-                {
-                  "type": "Heading",
-                  "props": {
-                    "level": 2,
-                    "children": "Latest Articles"
-                  }
-                },
-                {
-                  "type": "TextBlock",
-                  "props": {
-                    "children": "Explore our latest posts on trends, tips, and industry news."
-                  }
-                },
-                {
-                  "type": "Heading",
-                  "props": {
-                    "level": 2,
-                    "children": "Featured Post"
-                  }
-                },
-                {
-                  "type": "TextBlock",
-                  "props": {
-                    "children": "The Future of E-Commerce: Innovations Shaping 2025"
-                  }
-                },
-                {
-                  "type": "Heading",
-                  "props": {
-                    "level": 2,
-                    "children": "Category Spotlight"
-                  }
-                },
-                {
-                  "type": "TextBlock",
-                  "props": {
-                    "children": "How to Choose the Perfect Product Category for Your Needs"
-                  }
-                },
-                {
-                  "type": "Heading",
-                  "props": {
-                    "level": 2,
-                    "children": "Expert Advice"
-                  }
-                },
-                {
-                  "type": "TextBlock",
-                  "props": {
-                    "children": "5 Proven Strategies to Maximize Your Shopping Experience"
-                  }
-                },
-                {
-                  "type": "Heading",
-                  "props": {
-                    "level": 2,
-                    "children": "Community Stories"
-                  }
-                },
-                {
-                  "type": "TextBlock",
-                  "props": {
-                    "children": "Real Customer Experiences: From First Purchase to Loyal Fan"
-                  }
                 }
               ]
             }
