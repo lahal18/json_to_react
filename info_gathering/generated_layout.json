@@ -8,50 +8,32 @@
       {
         "type": "Navbar",
         "props": {
-          "logo": "logo",
-          "children": "logo",
-          "className": "bg-indigo-600 text-white shadow-md",
+          "logo": "WatchCo",
+          "children": "Watches",
+          "className": "bg-indigo-600 text-white p-4 shadow-md",
           "links": [
             {
-              "type": "Link",
-              "props": {
-                "href": "/",
-                "children": "Home"
-              }
+              "label": "Home",
+              "href": "/"
             },
             {
-              "type": "Link",
-              "props": {
-                "href": "/products",
-                "children": "Products"
-              }
+              "label": "Shop",
+              "href": "/shop"
             },
             {
-              "type": "Link",
-              "props": {
-                "href": "/cart",
-                "children": "Cart"
-              }
+              "label": "About",
+              "href": "/about"
             },
             {
-              "type": "CTA",
-              "props": {
-                "title": "Login",
-                "description": "",
-                "primaryButton": {
-                  "type": "SubmitButton",
-                  "props": {
-                    "children": "Sign In"
-                  }
-                },
-                "secondaryButton": {
-                  "type": "SubmitButton",
-                  "props": {
-                    "children": "Register"
-                  }
-                },
-                "className": "ml-2"
-              }
+              "label": "Contact",
+              "href": "/contact"
+            }
+          ],
+          "cta": [
+            {
+              "label": "Login",
+              "href": "/login",
+              "variant": "outline"
             }
           ],
           "sticky": true,
@@ -63,54 +45,70 @@
       {
         "type": "Footer",
         "props": {
-          "className": "text-gray-600 py-6 border-t",
-          "logo": "logo",
-          "copyright": "\u00a9 2025 Modern Gear Co.",
+          "className": "bg-gray-100 text-gray-600 py-6",
+          "logo": "WatchCo",
+          "copyright": "\u00a9 2025 WatchCo. All rights reserved.",
           "sections": [
             {
-              "type": "Heading",
-              "props": {
-                "children": "Shop",
-                "level": 4,
-                "color": "text-gray-500"
-              }
+              "title": "Quick Links",
+              "items": [
+                {
+                  "label": "Home",
+                  "href": "/"
+                },
+                {
+                  "label": "Shop",
+                  "href": "/shop"
+                },
+                {
+                  "label": "Blog",
+                  "href": "/blog"
+                }
+              ]
             },
             {
-              "type": "Link",
-              "props": {
-                "href": "/about",
-                "children": "About Us"
-              }
+              "title": "Legal",
+              "items": [
+                {
+                  "label": "Privacy Policy",
+                  "href": "/privacy"
+                },
+                {
+                  "label": "Terms",
+                  "href": "/terms"
+                }
+              ]
             },
             {
-              "type": "Link",
-              "props": {
-                "href": "/contact",
-                "children": "Contact"
-              }
+              "title": "Social",
+              "items": [
+                {
+                  "label": "Instagram",
+                  "href": "https://instagram.com/watchco"
+                },
+                {
+                  "label": "Twitter",
+                  "href": "https://twitter.com/watchco"
+                },
+                {
+                  "label": "Facebook",
+                  "href": "https://facebook.com/watchco"
+                }
+              ]
             }
           ],
           "socialLinks": [
             {
-              "type": "Link",
-              "props": {
-                "href": "#",
-                "children": "Instagram"
-              }
+              "icon": "Instagram",
+              "url": "https://instagram.com/watchco"
             },
             {
-              "type": "Link",
-              "props": {
-                "href": "#",
-                "children": "Twitter"
-              }
+              "icon": "Twitter",
+              "url": "https://twitter.com/watchco"
             },
             {
-              "type": "Link",
-              "props": {
-                "href": "#",
-                "children": "LinkedIn"
-              }
+              "icon": "Facebook",
+              "url": "https://facebook.com/watchco"
             }
           ]
         }
@@ -119,219 +117,105 @@
   },
   "pages": [
     {
-      "name": "Home",
+      "name": "SingleShowcasePage",
       "layout": [
         {
           "type": "Hero",
           "props": {
-            "title": "Welcome to Modern Gear",
-            "subtitle": "Premium equipment for discerning professionals",
-            "className": "text-center py-20",
-            "background": "bg-indigo-50"
+            "title": "Discover Timepieces",
+            "subtitle": "Elegant watches for discerning individuals",
+            "className": "text-center py-24 bg-indigo-50"
           }
         },
         {
           "type": "Section",
           "props": {
-            "className": "py-12"
+            "className": "max-w-4xl mx-auto px-4"
           },
           "children": [
             {
-              "type": "Heading",
-              "props": {
-                "children": "Featured Collections",
-                "level": 2,
-                "color": "text-gray-800"
-              }
-            },
-            {
               "type": "Grid",
               "props": {
-                "cols": 3,
-                "gap": 6
+                "cols": 1,
+                "gap": 8
               },
               "children": [
                 {
                   "type": "Card",
                   "props": {
-                    "className": "bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow",
-                    "rounded": "lg",
-                    "border": "border-gray-100"
+                    "className": "bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow",
+                    "rounded": "xl",
+                    "shadow": "xl"
                   },
                   "children": [
                     {
                       "type": "Image",
                       "props": {
-                        "src": "/images/premium-drill.jpg",
-                        "alt": "Premium Drill",
-                        "width": 300,
-                        "height": 200,
-                        "rounded": "md"
+                        "src": "/images/watch-hero.jpg",
+                        "alt": "Premium Watch",
+                        "className": "w-full h-96 object-cover rounded-t-xl",
+                        "rounded": "xl"
                       }
                     },
                     {
-                      "type": "TextBlock",
+                      "type": "Card",
                       "props": {
-                        "children": "Pro Drill",
-                        "size": 2,
-                        "color": "text-gray-900"
-                      }
-                    },
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "$149.99",
-                        "size": 3,
-                        "color": "text-indigo-600"
-                      }
-                    },
-                    {
-                      "type": "FlexRow",
-                      "props": {
-                        "justify": "center",
-                        "gap": 2
+                        "className": "p-6 flex flex-col items-center text-center"
                       },
                       "children": [
                         {
                           "type": "Badge",
                           "props": {
-                            "children": "New",
-                            "variant": "secondary",
-                            "size": "sm"
+                            "children": "Premium",
+                            "variant": "solid",
+                            "size": "lg",
+                            "rounded": "full",
+                            "className": "bg-indigo-600 text-white mb-4"
                           }
                         },
                         {
-                          "type": "SubmitButton",
+                          "type": "Heading",
                           "props": {
-                            "children": "Add to Cart",
-                            "variant": "primary",
-                            "size": "sm",
-                            "fullWidth": true
-                          }
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "Card",
-                  "props": {
-                    "className": "bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow",
-                    "rounded": "lg",
-                    "border": "border-gray-100"
-                  },
-                  "children": [
-                    {
-                      "type": "Image",
-                      "props": {
-                        "src": "/images/impact-wrench.jpg",
-                        "alt": "Impact Wrench",
-                        "width": 300,
-                        "height": 200,
-                        "rounded": "md"
-                      }
-                    },
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "Impact Wrench",
-                        "size": 2,
-                        "color": "text-gray-900"
-                      }
-                    },
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "$199.99",
-                        "size": 3,
-                        "color": "text-indigo-600"
-                      }
-                    },
-                    {
-                      "type": "FlexRow",
-                      "props": {
-                        "justify": "center",
-                        "gap": 2
-                      },
-                      "children": [
-                        {
-                          "type": "Badge",
-                          "props": {
-                            "children": "Best Seller",
-                            "variant": "primary",
-                            "size": "sm"
+                            "children": "Astronomical Watch",
+                            "level": 2,
+                            "className": "text-2xl font-bold text-indigo-800 mb-2"
                           }
                         },
                         {
-                          "type": "SubmitButton",
+                          "type": "TextBlock",
                           "props": {
-                            "children": "Add to Cart",
-                            "variant": "primary",
-                            "size": "sm",
-                            "fullWidth": true
-                          }
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "Card",
-                  "props": {
-                    "className": "bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow",
-                    "rounded": "lg",
-                    "border": "border-gray-100"
-                  },
-                  "children": [
-                    {
-                      "type": "Image",
-                      "props": {
-                        "src": "/images/laser-level.jpg",
-                        "alt": "Laser Level",
-                        "width": 300,
-                        "height": 200,
-                        "rounded": "md"
-                      }
-                    },
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "Laser Level",
-                        "size": 2,
-                        "color": "text-gray-900"
-                      }
-                    },
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "$89.99",
-                        "size": 3,
-                        "color": "text-indigo-600"
-                      }
-                    },
-                    {
-                      "type": "FlexRow",
-                      "props": {
-                        "justify": "center",
-                        "gap": 2
-                      },
-                      "children": [
-                        {
-                          "type": "Badge",
-                          "props": {
-                            "children": "Clearance",
-                            "variant": "secondary",
-                            "size": "sm"
+                            "children": "Precision engineered with sapphire crystal and titanium case for ultimate durability and style.",
+                            "className": "text-gray-600 text-lg mb-6"
                           }
                         },
                         {
-                          "type": "SubmitButton",
+                          "type": "FlexRow",
                           "props": {
-                            "children": "Add to Cart",
-                            "variant": "primary",
-                            "size": "sm",
-                            "fullWidth": true
-                          }
+                            "justify": "center",
+                            "gap": 4
+                          },
+                          "children": [
+                            {
+                              "type": "Badge",
+                              "props": {
+                                "children": "$1,299",
+                                "variant": "solid",
+                                "size": "md",
+                                "rounded": "md",
+                                "className": "bg-gray-100 text-gray-700 font-medium"
+                              }
+                            },
+                            {
+                              "type": "Badge",
+                              "props": {
+                                "children": "Explore Collection",
+                                "variant": "solid",
+                                "size": "md",
+                                "rounded": "md",
+                                "className": "bg-indigo-600 text-white px-4 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors"
+                              }
+                            }
+                          ]
                         }
                       ]
                     }
@@ -344,16 +228,15 @@
         {
           "type": "Section",
           "props": {
-            "className": "bg-indigo-50 py-16"
+            "className": "py-16 bg-gray-50"
           },
           "children": [
             {
               "type": "Heading",
               "props": {
-                "children": "Why Choose Modern Gear",
-                "level": 2,
-                "align": "center",
-                "color": "text-gray-800"
+                "children": "Why Choose Our Watches",
+                "level": 3,
+                "className": "text-3xl font-bold text-center text-indigo-800 mb-12"
               }
             },
             {
@@ -367,31 +250,34 @@
                 {
                   "type": "StatsCard",
                   "props": {
-                    "title": "Premium Quality",
+                    "title": "Craftsmanship",
                     "value": "100%",
-                    "icon": "Check",
+                    "icon": "Craft",
                     "change": "+15%",
-                    "description": "Rigorous quality control"
+                    "description": "Hand-assembled by master watchmakers",
+                    "className": "bg-white p-6 rounded-xl shadow-sm"
                   }
                 },
                 {
                   "type": "StatsCard",
                   "props": {
-                    "title": "Fast Shipping",
-                    "value": "2 Days",
-                    "icon": "ArrowRight",
+                    "title": "Materials",
+                    "value": "Premium",
+                    "icon": "Material",
                     "change": "+20%",
-                    "description": "Free shipping over $75"
+                    "description": "Sapphire crystal and aerospace-grade titanium",
+                    "className": "bg-white p-6 rounded-xl shadow-sm"
                   }
                 },
                 {
                   "type": "StatsCard",
                   "props": {
-                    "title": "Secure Payment",
-                    "value": "100% Secure",
-                    "icon": "Lock",
-                    "change": "+30%",
-                    "description": "Multiple payment options"
+                    "title": "Warranty",
+                    "value": "5 Years",
+                    "icon": "Shield",
+                    "change": "Included",
+                    "description": "Comprehensive coverage for peace of mind",
+                    "className": "bg-white p-6 rounded-xl shadow-sm"
                   }
                 }
               ]
@@ -401,802 +287,60 @@
         {
           "type": "Section",
           "props": {
-            "className": "py-12"
+            "className": "py-20 border-t border-gray-200"
           },
           "children": [
             {
               "type": "Heading",
               "props": {
-                "children": "Customer Reviews",
-                "level": 2,
-                "align": "center",
-                "color": "text-gray-800"
+                "children": "Join 10,000+ Happy Collectors",
+                "level": 3,
+                "className": "text-3xl font-bold text-center text-indigo-800 mb-8"
               }
             },
             {
-              "type": "Testimonials",
+              "type": "TextBlock",
               "props": {
-                "testimonials": [
-                  {
-                    "author": "James R.",
-                    "rating": 5,
-                    "text": "The impact wrench exceeded my expectations - powerful and reliable. Perfect for my workshop.",
-                    "image": "/images/james.jpg"
-                  },
-                  {
-                    "author": "Michael T.",
-                    "rating": 4,
-                    "text": "Laser level saved me hours on my renovation. Highly accurate and easy to use.",
-                    "image": "/images/michael.jpg"
-                  }
-                ],
-                "className": "space-y-6",
-                "columns": 1,
-                "autoplay": true,
-                "autoplaySpeed": 5000
-              }
-            }
-          ]
-        },
-        {
-          "type": "CTASection",
-          "props": {
-            "title": "Ready to Upgrade Your Workshop?",
-            "description": "Join thousands of professionals who trust Modern Gear for their projects",
-            "primaryButton": {
-              "type": "SubmitButton",
-              "props": {
-                "children": "Browse Products",
-                "variant": "primary",
-                "size": "lg",
-                "fullWidth": true
-              }
-            },
-            "secondaryButton": {
-              "type": "SubmitButton",
-              "props": {
-                "children": "Watch Video Testimonials",
-                "variant": "secondary",
-                "size": "lg",
-                "fullWidth": true
-              }
-            },
-            "className": "bg-indigo-600 text-white text-center py-16",
-            "background": "bg-indigo-600",
-            "textColor": "text-white",
-            "align": "center"
-          }
-        }
-      ]
-    },
-    {
-      "name": "Products",
-      "layout": [
-        {
-          "type": "Hero",
-          "props": {
-            "title": "Modern Gear Collection",
-            "subtitle": "Premium equipment for discerning professionals",
-            "className": "text-center py-12"
-          }
-        },
-        {
-          "type": "Section",
-          "props": {
-            "className": "bg-gray-50 py-8"
-          },
-          "children": [
-            {
-              "type": "Heading",
-              "props": {
-                "children": "Featured Products",
-                "level": 2,
-                "color": "text-indigo-700",
-                "align": "text-left"
+                "children": "Experience the perfect blend of tradition and innovation in watchmaking.",
+                "className": "text-center text-gray-600 text-lg max-w-3xl mx-auto"
               }
             },
             {
-              "type": "Grid",
+              "type": "FlexRow",
               "props": {
-                "cols": 3,
+                "justify": "center",
                 "gap": 4
               },
               "children": [
                 {
-                  "type": "Card",
+                  "type": "Badge",
                   "props": {
-                    "className": "bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow",
-                    "rounded": "lg",
-                    "border": "border-gray-100"
-                  },
-                  "children": [
-                    {
-                      "type": "Image",
-                      "props": {
-                        "src": "/images/product1.jpg",
-                        "alt": "Professional Drill Set",
-                        "width": 300,
-                        "height": 300,
-                        "rounded": "md",
-                        "objectFit": "contain"
-                      }
-                    },
-                    {
-                      "type": "Heading",
-                      "props": {
-                        "children": "Pro Drill Set",
-                        "level": 4,
-                        "color": "text-gray-800"
-                      }
-                    },
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "$189.99",
-                        "size": 2,
-                        "color": "text-indigo-600"
-                      }
-                    },
-                    {
-                      "type": "FlexRow",
-                      "props": {
-                        "align": "center",
-                        "justify": "between",
-                        "gap": 2
-                      },
-                      "children": [
-                        {
-                          "type": "Badge",
-                          "props": {
-                            "children": "Best Seller",
-                            "variant": "secondary",
-                            "size": "sm"
-                          }
-                        },
-                        {
-                          "type": "FlexColumn",
-                          "props": {
-                            "align": "center",
-                            "justify": "center"
-                          },
-                          "children": [
-                            {
-                              "type": "TextBlock",
-                              "props": {
-                                "children": "4.8 \u2605",
-                                "size": 1,
-                                "color": "text-yellow-400"
-                              }
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "Card",
-                  "props": {
-                    "className": "bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow",
-                    "rounded": "lg",
-                    "border": "border-gray-100"
-                  },
-                  "children": [
-                    {
-                      "type": "Image",
-                      "props": {
-                        "src": "/images/product2.jpg",
-                        "alt": "Smart Impact Driver",
-                        "width": 300,
-                        "height": 300,
-                        "rounded": "md",
-                        "objectFit": "contain"
-                      }
-                    },
-                    {
-                      "type": "Heading",
-                      "props": {
-                        "children": "Smart Impact Driver",
-                        "level": 4,
-                        "color": "text-gray-800"
-                      }
-                    },
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "$149.99",
-                        "size": 2,
-                        "color": "text-indigo-600"
-                      }
-                    },
-                    {
-                      "type": "FlexRow",
-                      "props": {
-                        "align": "center",
-                        "justify": "between",
-                        "gap": 2
-                      },
-                      "children": [
-                        {
-                          "type": "Badge",
-                          "props": {
-                            "children": "New",
-                            "variant": "secondary",
-                            "size": "sm"
-                          }
-                        },
-                        {
-                          "type": "FlexColumn",
-                          "props": {
-                            "align": "center",
-                            "justify": "center"
-                          },
-                          "children": [
-                            {
-                              "type": "TextBlock",
-                              "props": {
-                                "children": "4.6 \u2605",
-                                "size": 1,
-                                "color": "text-yellow-400"
-                              }
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "Card",
-                  "props": {
-                    "className": "bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow",
-                    "rounded": "lg",
-                    "border": "border-gray-100"
-                  },
-                  "children": [
-                    {
-                      "type": "Image",
-                      "props": {
-                        "src": "/images/product3.jpg",
-                        "alt": "Multi-tool Kit",
-                        "width": 300,
-                        "height": 300,
-                        "rounded": "md",
-                        "objectFit": "contain"
-                      }
-                    },
-                    {
-                      "type": "Heading",
-                      "props": {
-                        "children": "Multi-tool Kit",
-                        "level": 4,
-                        "color": "text-gray-800"
-                      }
-                    },
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "$89.99",
-                        "size": 2,
-                        "color": "text-indigo-600"
-                      }
-                    },
-                    {
-                      "type": "FlexRow",
-                      "props": {
-                        "align": "center",
-                        "justify": "between",
-                        "gap": 2
-                      },
-                      "children": [
-                        {
-                          "type": "Badge",
-                          "props": {
-                            "children": "Top Rated",
-                            "variant": "secondary",
-                            "size": "sm"
-                          }
-                        },
-                        {
-                          "type": "FlexColumn",
-                          "props": {
-                            "align": "center",
-                            "justify": "center"
-                          },
-                          "children": [
-                            {
-                              "type": "TextBlock",
-                              "props": {
-                                "children": "4.9 \u2605",
-                                "size": 1,
-                                "color": "text-yellow-400"
-                              }
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "Section",
-          "props": {
-            "className": "bg-indigo-50 py-12"
-          },
-          "children": [
-            {
-              "type": "Heading",
-              "props": {
-                "children": "Need Help?",
-                "level": 2,
-                "color": "text-white",
-                "align": "text-center"
-              }
-            },
-            {
-              "type": "FlexColumn",
-              "props": {
-                "align": "center",
-                "justify": "center",
-                "gap": 3
-              },
-              "children": [
-                {
-                  "type": "TextBlock",
-                  "props": {
-                    "children": "Have questions about our products? Our expert team is ready to assist you.",
-                    "size": 1,
-                    "color": "text-gray-200"
+                    "children": "Free Shipping",
+                    "variant": "solid",
+                    "size": "md",
+                    "rounded": "md",
+                    "className": "bg-green-100 text-green-700 px-4 py-2"
                   }
                 },
                 {
-                  "type": "FlexRow",
+                  "type": "Badge",
                   "props": {
-                    "align": "center",
-                    "justify": "center",
-                    "gap": 2
-                  },
-                  "children": [
-                    {
-                      "type": "SubmitButton",
-                      "props": {
-                        "children": "Contact Support",
-                        "variant": "ghost",
-                        "size": "lg",
-                        "className": "text-indigo-600 hover:text-indigo-400"
-                      }
-                    },
-                    {
-                      "type": "SubmitButton",
-                      "props": {
-                        "children": "View FAQ",
-                        "variant": "outline",
-                        "size": "lg",
-                        "className": "text-white hover:bg-indigo-600"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "ShoppingCart",
-      "layout": [
-        {
-          "type": "Hero",
-          "props": {
-            "title": "Shopping Cart",
-            "subtitle": "Your selected items"
-          }
-        },
-        {
-          "type": "Section",
-          "props": {
-            "padding": 4
-          },
-          "children": [
-            {
-              "type": "Grid",
-              "props": {
-                "cols": 1
-              },
-              "children": [
+                    "children": "Secure Checkout",
+                    "variant": "solid",
+                    "size": "md",
+                    "rounded": "md",
+                    "className": "bg-blue-100 text-blue-700 px-4 py-2"
+                  }
+                },
                 {
-                  "type": "Card",
+                  "type": "Badge",
                   "props": {
-                    "className": "bg-white shadow-md rounded-lg p-4 mb-4",
-                    "shadow": "md",
-                    "rounded": "lg"
-                  },
-                  "children": [
-                    {
-                      "type": "TextBlock",
-                      "props": {
-                        "children": "Items in Your Cart",
-                        "size": "lg",
-                        "color": "text-gray-800"
-                      }
-                    },
-                    {
-                      "type": "FlexColumn",
-                      "props": {
-                        "align": "baseline",
-                        "justify": "space-y-2"
-                      },
-                      "children": [
-                        {
-                          "type": "FlexRow",
-                          "props": {
-                            "align": "center",
-                            "justify": "space-x-3"
-                          },
-                          "children": [
-                            {
-                              "type": "Image",
-                              "props": {
-                                "src": "/placeholder-image.jpg",
-                                "alt": "Product Image",
-                                "width": 64,
-                                "height": 64,
-                                "rounded": "md"
-                              }
-                            },
-                            {
-                              "type": "TextBlock",
-                              "props": {
-                                "children": "Product Name",
-                                "size": "md",
-                                "color": "text-gray-700"
-                              }
-                            },
-                            {
-                              "type": "TextBlock",
-                              "props": {
-                                "children": "3",
-                                "size": "md",
-                                "color": "text-gray-500"
-                              }
-                            },
-                            {
-                              "type": "TextBlock",
-                              "props": {
-                                "children": "$199.99",
-                                "size": "lg",
-                                "color": "text-indigo-600"
-                              }
-                            }
-                          ]
-                        },
-                        {
-                          "type": "FlexRow",
-                          "props": {
-                            "align": "baseline",
-                            "justify": "space-x-3"
-                          },
-                          "children": [
-                            {
-                              "type": "TextBlock",
-                              "props": {
-                                "children": "Subtotal:",
-                                "size": "md",
-                                "color": "text-gray-700"
-                              }
-                            },
-                            {
-                              "type": "TextBlock",
-                              "props": {
-                                "children": "$599.97",
-                                "size": "lg",
-                                "color": "text-indigo-600"
-                              }
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "FlexColumn",
-                      "props": {
-                        "className": "mt-4"
-                      },
-                      "children": [
-                        {
-                          "type": "SubmitButton",
-                          "props": {
-                            "children": "Continue Shopping",
-                            "variant": "secondary",
-                            "size": "lg",
-                            "className": "w-full text-indigo-600 border border-indigo-600 rounded-md py-2"
-                          }
-                        },
-                        {
-                          "type": "SubmitButton",
-                          "props": {
-                            "children": "Proceed to Checkout",
-                            "variant": "primary",
-                            "size": "lg",
-                            "className": "w-full text-white bg-indigo-600 rounded-md py-2 hover:bg-indigo-700"
-                          }
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Checkout",
-      "layout": [
-        {
-          "type": "Hero",
-          "props": {
-            "title": "Checkout",
-            "subtitle": "Complete Your Purchase"
-          }
-        },
-        {
-          "type": "Section",
-          "props": {
-            "padding": 4
-          },
-          "children": [
-            {
-              "type": "Grid",
-              "props": {
-                "cols": 1
-              },
-              "children": [
-                {
-                  "type": "Container",
-                  "props": {
-                    "maxWidth": 720,
-                    "padding": 4
-                  },
-                  "children": [
-                    {
-                      "type": "Heading",
-                      "props": {
-                        "children": "Payment Information",
-                        "level": 2,
-                        "color": "text-gray-900"
-                      }
-                    },
-                    {
-                      "type": "FlexColumn",
-                      "props": {
-                        "align": "start",
-                        "justify": "center",
-                        "gap": 2
-                      },
-                      "children": [
-                        {
-                          "type": "TextBlock",
-                          "props": {
-                            "children": "Order Summary",
-                            "size": "sm",
-                            "color": "text-gray-600"
-                          }
-                        },
-                        {
-                          "type": "TextBlock",
-                          "props": {
-                            "children": "Subtotal: $199.99",
-                            "size": "md",
-                            "color": "text-gray-900"
-                          }
-                        },
-                        {
-                          "type": "TextBlock",
-                          "props": {
-                            "children": "Shipping: $5.99",
-                            "size": "md",
-                            "color": "text-gray-900"
-                          }
-                        },
-                        {
-                          "type": "TextBlock",
-                          "props": {
-                            "children": "Total: $205.98",
-                            "size": "xl",
-                            "color": "text-indigo-600 font-bold"
-                          }
-                        }
-                      ]
-                    },
-                    {
-                      "type": "FlexColumn",
-                      "props": {
-                        "align": "start",
-                        "justify": "center",
-                        "gap": 2
-                      },
-                      "children": [
-                        {
-                          "type": "TextBlock",
-                          "props": {
-                            "children": "Payment Method",
-                            "size": "sm",
-                            "color": "text-gray-600"
-                          }
-                        },
-                        {
-                          "type": "SelectDropdown",
-                          "props": {
-                            "label": "Payment Method",
-                            "options": [
-                              {
-                                "label": "Credit Card",
-                                "value": "credit_card"
-                              },
-                              {
-                                "label": "PayPal",
-                                "value": "paypal"
-                              }
-                            ],
-                            "value": "credit_card",
-                            "className": "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                          }
-                        },
-                        {
-                          "type": "TextBlock",
-                          "props": {
-                            "children": "Card Details",
-                            "size": "sm",
-                            "color": "text-gray-600"
-                          }
-                        },
-                        {
-                          "type": "FlexRow",
-                          "props": {
-                            "wrap": true,
-                            "gap": 2
-                          },
-                          "children": [
-                            {
-                              "type": "InputField",
-                              "props": {
-                                "label": "Card Number",
-                                "placeholder": "1234 5678 9012 3456",
-                                "type": "text",
-                                "disabled": false
-                              }
-                            },
-                            {
-                              "type": "InputField",
-                              "props": {
-                                "label": "Expiry",
-                                "placeholder": "MM/YY",
-                                "type": "text",
-                                "disabled": false
-                              }
-                            },
-                            {
-                              "type": "InputField",
-                              "props": {
-                                "label": "CVC",
-                                "placeholder": "123",
-                                "type": "text",
-                                "disabled": false
-                              }
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "FlexColumn",
-                      "props": {
-                        "align": "start",
-                        "justify": "center",
-                        "gap": 2
-                      },
-                      "children": [
-                        {
-                          "type": "TextBlock",
-                          "props": {
-                            "children": "Billing Address",
-                            "size": "sm",
-                            "color": "text-gray-600"
-                          }
-                        },
-                        {
-                          "type": "InputField",
-                          "props": {
-                            "label": "Street Address",
-                            "placeholder": "123 Main Street",
-                            "type": "text",
-                            "disabled": false
-                          }
-                        },
-                        {
-                          "type": "InputField",
-                          "props": {
-                            "label": "City",
-                            "placeholder": "Seattle",
-                            "type": "text",
-                            "disabled": false
-                          }
-                        },
-                        {
-                          "type": "FlexRow",
-                          "props": {
-                            "gap": 2
-                          },
-                          "children": [
-                            {
-                              "type": "InputField",
-                              "props": {
-                                "label": "State",
-                                "placeholder": "WA",
-                                "type": "text",
-                                "disabled": false
-                              }
-                            },
-                            {
-                              "type": "InputField",
-                              "props": {
-                                "label": "ZIP",
-                                "placeholder": "98101",
-                                "type": "text",
-                                "disabled": false
-                              }
-                            }
-                          ]
-                        },
-                        {
-                          "type": "InputField",
-                          "props": {
-                            "label": "Country",
-                            "placeholder": "USA",
-                            "type": "text",
-                            "disabled": false
-                          }
-                        }
-                      ]
-                    },
-                    {
-                      "type": "CTASection",
-                      "props": {
-                        "title": "Review Order",
-                        "description": "Check details before completing your purchase",
-                        "primaryButton": {
-                          "type": "SubmitButton",
-                          "props": {
-                            "children": "Place Order",
-                            "variant": "primary",
-                            "size": "lg",
-                            "fullWidth": true,
-                            "disabled": false
-                          }
-                        },
-                        "secondaryButton": {
-                          "type": "SubmitButton",
-                          "props": {
-                            "children": "Cancel",
-                            "variant": "secondary",
-                            "size": "lg",
-                            "fullWidth": true,
-                            "disabled": false
-                          }
-                        },
-                        "background": "white",
-                        "textColor": "gray-800",
-                        "align": "center"
-                      }
-                    }
-                  ]
+                    "children": "Easy Returns",
+                    "variant": "solid",
+                    "size": "md",
+                    "rounded": "md",
+                    "className": "bg-purple-100 text-purple-700 px-4 py-2"
+                  }
                 }
               ]
             }
