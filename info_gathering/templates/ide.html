@@ -1,432 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Architect - Workspace</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
-    <style>
-        :root {
-            --bg: #09090b;
-            --surface-1: #18181b;
-            --surface-2: #27272a;
-            --border: #3f3f46;
-            --text-1: #fafafa;
-            --text-2: #a1a1aa;
-            --accent: #10b981;
-            --accent-glow: rgba(16, 185, 129, 0.2);
-            --header-h: 56px;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg);
-            color: var(--text-1);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
-
-        /* HEADER */
-        header {
-            height: var(--header-h);
-            background: rgba(24, 24, 27, 0.8);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 24px;
-            flex-shrink: 0;
-            z-index: 10;
-        }
-        
-        .logo { display: flex; align-items: center; gap: 12px; }
-        .logo-icon { width: 28px; height: 28px; background: var(--accent); border-radius: 8px; display: grid; place-items: center; color: #000; font-weight: bold; font-family: 'JetBrains Mono', monospace; font-size: 14px;}
-        .logo h1 { font-size: 15px; font-weight: 500; letter-spacing: -0.2px; }
-
-        .header-actions button {
-            background: var(--surface-2);
-            color: var(--text-1);
-            border: 1px solid var(--border);
-            padding: 6px 14px;
-            border-radius: 6px;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .header-actions button:hover { background: var(--border); }
-
-        /* MAIN LAYOUT */
-        #workspace {
-            display: flex;
-            flex: 1;
-            height: calc(100vh - var(--header-h));
-        }
-
-        /* SIDEBAR (Tree) */
-        #sidebar {
-            width: 250px;
-            background: var(--surface-1);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            flex-shrink: 0;
-        }
-        .tree-header { padding: 14px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-2); font-weight: 600; border-bottom: 1px solid var(--border); }
-        .tree-list { padding: 8px 0; }
-        .tree-node {
-            padding: 6px 16px; 
-            font-size: 13px; 
-            color: var(--text-2);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.15s;
-        }
-        .tree-node:hover { background: rgba(255,255,255,0.05); color: var(--text-1); }
-        .tree-node.active { background: rgba(16, 185, 129, 0.1); color: var(--accent); border-right: 2px solid var(--accent); }
-        .tree-node svg { width: 14px; height: 14px; opacity: 0.7; }
-        .tree-indent { margin-left: 16px; }
-
-        /* EDITOR */
-        #editor-pane {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid var(--border);
-            background: var(--surface-1);
-            min-width: 300px;
-        }
-        .editor-tab {
-            height: 48px;
-            background: var(--bg);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            padding: 0 16px;
-            font-size: 13px;
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--text-2);
-        }
-        #editor-container { flex: 1; overflow: hidden; }
-
-        /* BROWSER INTERFACE */
-        #browser-pane {
-            flex: 1.2;
-            display: flex;
-            flex-direction: column;
-            background: #fff;
-            position: relative;
-        }
-        .browser-toolbar {
-            height: 48px;
-            background: #f1f5f9;
-            border-bottom: 1px solid #cbd5e1;
-            display: flex;
-            align-items: center;
-            padding: 0 16px;
-            gap: 12px;
-        }
-        .browser-dots { display: flex; gap: 6px; }
-        .dot { width: 10px; height: 10px; border-radius: 50%; }
-        .dot.r { background: #ef4444; } .dot.y { background: #f59e0b; } .dot.g { background: #10b981; }
-        .browser-url { 
-            background: #fff; padding: 6px 12px; border-radius: 6px; font-size: 12px;
-            color: #475569; flex: 1; text-align: center; border: 1px solid #e2e8f0; font-family: 'JetBrains Mono', monospace;
-        }
-        .browser-refresh { cursor: pointer; color: #475569; }
-        
-        #preview-iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            background: #fff;
-        }
-
-        /* BUILD OVERLAY */
-        #build-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(9, 9, 11, 0.85);
-            backdrop-filter: blur(8px);
-            z-index: 100;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
-        #build-overlay.active { display: flex; }
-        
-        .build-card {
-            background: var(--surface-1);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 32px;
-            width: 480px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-        }
-        .build-status {
-            font-size: 14px;
-            margin-bottom: 24px;
-            color: var(--accent);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .spinner {
-            width: 18px; height: 18px; border: 2px solid var(--border);
-            border-top-color: var(--accent); border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        .terminal-log {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 16px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            color: var(--text-2);
-            height: 200px;
-            overflow-y: auto;
-            line-height: 1.6;
-        }
-        .terminal-log div { margin-bottom: 4px; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Architect - Workspace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
+  <script>
+    tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter','ui-sans-serif','system-ui'], mono: ['JetBrains Mono','monospace'] }, colors: { ink:'#08090c', panel:'#111318', line:'#252a33', mint:'#34d399' } } } }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    html, body { height: 100%; overflow: hidden; }
+    .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+    .scrollbar-thin::-webkit-scrollbar-thumb { background: #303744; border-radius: 999px; }
+    #workspace-grid { grid-template-columns: 260px 6px 42% 6px 1fr; }
+    .drag-handle { width: 6px; cursor: col-resize; background: #151922; border-left: 1px solid #252a33; border-right: 1px solid #252a33; }
+    .drag-handle:hover { background: #34d399; }
+  </style>
 </head>
-<body>
-
-<header>
-    <div class="logo">
-        <div class="logo-icon">&#10022;</div>
-        <h1>AI Architect Workspace</h1>
-    </div>
-    <div class="header-actions">
-        <span style="font-size: 13px; color: var(--text-2); margin-right: 16px;">Proj: {{ project_id }}</span>
-        <button onclick="window.location.href='/'">Exit Workspace</button>
-    </div>
-</header>
-
-<div id="workspace">
-    <!-- FILE EXPLORER -->
-    <div id="sidebar">
-        <div class="tree-header">EXPLORER</div>
-        <div class="tree-list" id="tree-root"></div>
-    </div>
-
-    <!-- CODE EDITOR -->
-    <div id="editor-pane">
-        <div class="editor-tab" id="editor-tab">Select a file to view</div>
-        <div id="editor-container"></div>
-    </div>
-
-    <!-- INTERNAL BROWSER -->
-    <div id="browser-pane">
-        <div class="browser-toolbar">
-            <div class="browser-dots">
-                <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
-            </div>
-            <div class="browser-refresh" onclick="refreshIframe()">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg>
-            </div>
-            <div class="browser-url">http://localhost:5173</div>
+<body class="h-screen bg-ink text-slate-100 font-sans">
+  <div class="flex h-screen flex-col overflow-hidden">
+    <header class="flex h-14 shrink-0 items-center justify-between border-b border-line bg-panel px-4">
+      <div class="flex min-w-0 items-center gap-3">
+        <div class="grid h-8 w-8 place-items-center rounded-lg bg-mint font-black text-ink">A</div>
+        <div class="min-w-0">
+          <div class="truncate text-sm font-semibold">{{ project_id }}</div>
+          <div class="text-xs text-slate-400">AI Architect Workspace</div>
         </div>
-        <iframe id="preview-iframe" src="about:blank"></iframe>
-    </div>
-</div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="refreshIframe()" class="rounded-lg border border-line px-3 py-2 text-xs font-semibold text-slate-200 hover:border-mint">Refresh Preview</button>
+        <button onclick="showPublishModal()" class="rounded-lg bg-mint px-4 py-2 text-xs font-black text-ink hover:bg-emerald-300">?? Publish to Web</button>
+        <button onclick="window.location.href='/'" class="rounded-lg border border-line px-3 py-2 text-xs font-semibold text-slate-400 hover:text-white">Exit</button>
+      </div>
+    </header>
 
-<!-- BUILD OVERLAY -->
-<div id="build-overlay">
-    <div class="build-card">
-        <div class="build-status" id="build-status">
-            <div class="spinner"></div> 
-            <span id="build-status-text">Initializing generation pipeline...</span>
+    <div id="workspace-grid" class="grid min-h-0 flex-1 overflow-hidden">
+      <aside id="sidebar" class="min-w-[180px] overflow-hidden border-r border-line bg-[#0b0d12]">
+        <div class="flex h-11 items-center justify-between border-b border-line px-3 text-xs font-bold uppercase tracking-wide text-slate-500"><span>Files</span><button onclick="loadTree()" class="text-slate-400 hover:text-mint">?</button></div>
+        <div id="tree-root" class="scrollbar-thin h-[calc(100%-44px)] overflow-auto py-2"></div>
+      </aside>
+      <div class="drag-handle" data-resize="left"></div>
+
+      <section id="code-pane" class="min-w-[320px] overflow-hidden bg-panel">
+        <div class="flex h-full min-h-0 flex-col">
+          <div id="editor-tab" class="flex h-11 shrink-0 items-center border-b border-line bg-[#0b0d12] px-3 font-mono text-xs text-slate-400">Select a file to view</div>
+          <div id="editor-container" class="min-h-0 flex-1"></div>
+          <div class="h-40 shrink-0 border-t border-line bg-[#08090c]">
+            <div class="flex h-9 items-center justify-between border-b border-line px-3"><span class="font-mono text-xs text-slate-400">Terminal</span><button onclick="clearTerminal()" class="text-xs text-slate-500 hover:text-white">Clear</button></div>
+            <div id="terminal-log" class="scrollbar-thin h-[calc(100%-36px)] overflow-auto p-3 font-mono text-xs leading-5 text-slate-400"></div>
+          </div>
         </div>
-        <div class="terminal-log" id="terminal-log"></div>
+      </section>
+      <div class="drag-handle" data-resize="right"></div>
+
+      <section class="min-w-[360px] overflow-hidden bg-white">
+        <div class="flex h-full min-h-0 flex-col">
+          <div class="flex h-11 shrink-0 items-center gap-3 border-b border-slate-200 bg-slate-100 px-3">
+            <div class="flex gap-1.5"><span class="h-3 w-3 rounded-full bg-red-400"></span><span class="h-3 w-3 rounded-full bg-amber-400"></span><span class="h-3 w-3 rounded-full bg-emerald-400"></span></div>
+            <div id="browser-url" class="min-w-0 flex-1 truncate rounded-md border border-slate-200 bg-white px-3 py-1.5 text-center font-mono text-xs text-slate-500">http://localhost:5173</div>
+          </div>
+          <iframe id="preview-iframe" class="min-h-0 flex-1 border-0 bg-white" src="about:blank"></iframe>
+        </div>
+      </section>
     </div>
-</div>
+  </div>
+
+  <div id="build-overlay" class="fixed inset-0 z-40 hidden items-center justify-center bg-black/80 p-4 backdrop-blur">
+    <div class="w-full max-w-lg rounded-xl border border-line bg-panel p-5 shadow-2xl">
+      <div class="flex items-center gap-3"><div class="h-5 w-5 animate-spin rounded-full border-2 border-line border-t-mint"></div><div id="build-status-text" class="text-sm font-semibold text-mint">Working...</div></div>
+      <div id="overlay-log" class="scrollbar-thin mt-4 max-h-60 overflow-auto rounded-lg border border-line bg-[#08090c] p-3 font-mono text-xs leading-5 text-slate-400"></div>
+    </div>
+  </div>
+
+  <div id="edit-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 p-4 backdrop-blur">
+    <div class="w-full max-w-xl rounded-xl border border-line bg-panel p-5">
+      <h2 class="text-lg font-bold">Edit Component</h2>
+      <p id="edit-component-name" class="mt-1 font-mono text-xs text-mint"></p>
+      <textarea id="edit-instruction" class="mt-4 h-32 w-full resize-none rounded-lg border border-line bg-[#08090c] p-3 text-sm text-white outline-none focus:border-mint" placeholder="What do you want to change in this component?"></textarea>
+      <div class="mt-4 flex justify-end gap-2"><button onclick="closeEditModal()" class="rounded-lg border border-line px-4 py-2 text-sm text-slate-300">Cancel</button><button onclick="submitComponentEdit()" class="rounded-lg bg-mint px-4 py-2 text-sm font-bold text-ink">Apply AI Edit</button></div>
+    </div>
+  </div>
+
+  <div id="publish-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 p-4 backdrop-blur">
+    <div class="w-full max-w-md rounded-xl border border-line bg-panel p-5">
+      <h2 class="text-lg font-bold">Publish to GitHub Pages</h2>
+      <div class="mt-4 grid gap-3">
+        <input id="gh-user" class="h-11 rounded-lg border border-line bg-[#08090c] px-3 text-sm outline-none focus:border-mint" placeholder="GitHub Username" />
+        <input id="gh-repo" class="h-11 rounded-lg border border-line bg-[#08090c] px-3 text-sm outline-none focus:border-mint" placeholder="Repository Name" />
+        <input id="gh-token" type="password" class="h-11 rounded-lg border border-line bg-[#08090c] px-3 text-sm outline-none focus:border-mint" placeholder="GitHub Personal Access Token" />
+      </div>
+      <p class="mt-3 text-xs leading-5 text-slate-400">The repository must already exist. After upload, enable GitHub Pages for the repo using the pushed branch.</p>
+      <div class="mt-4 flex justify-end gap-2"><button onclick="closePublishModal()" class="rounded-lg border border-line px-4 py-2 text-sm text-slate-300">Cancel</button><button onclick="publishToGithub()" class="rounded-lg bg-mint px-4 py-2 text-sm font-bold text-ink">Publish</button></div>
+    </div>
+  </div>
+
+  <div id="success-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 p-4 backdrop-blur">
+    <div class="w-full max-w-lg rounded-xl border border-mint/40 bg-panel p-5 text-center shadow-2xl shadow-emerald-950/30">
+      <div class="mx-auto grid h-12 w-12 place-items-center rounded-full bg-mint text-xl font-black text-ink">?</div>
+      <h2 class="mt-4 text-xl font-bold">Published</h2>
+      <a id="live-link" class="mt-3 block break-all rounded-lg border border-line bg-[#08090c] px-4 py-3 font-mono text-sm text-mint hover:border-mint" target="_blank" rel="noopener"></a>
+      <p class="mt-3 text-sm text-slate-400">Enable GitHub Pages in your repository settings if the link is not live yet.</p>
+      <button onclick="document.getElementById('success-modal').classList.add('hidden')" class="mt-4 rounded-lg bg-mint px-4 py-2 text-sm font-bold text-ink">Done</button>
+    </div>
+  </div>
 
 <script>
-    const PROJECT_ID = "{{ project_id }}";
-    let monacoEditor = null;
-    
-    // Icons SVG
-    const iconFolder = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/></svg>`;
-    const iconFile = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>`;
+const PROJECT_ID = "{{ project_id }}";
+let monacoEditor = null;
+let activeEditPath = '';
+let previewUrl = new URLSearchParams(window.location.search).get('url') || localStorage.getItem('preview-url-' + PROJECT_ID) || 'http://localhost:5173';
+localStorage.setItem('preview-url-' + PROJECT_ID, previewUrl);
+const iconFolder = `<svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.7-.9L9.6 3.9A2 2 0 0 0 7.9 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/></svg>`;
+const iconFile = `<svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><path d="M14 2v6h6"/></svg>`;
 
-    // Initialize Monaco
-    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' }});
-    require(['vs/editor/editor.main'], function() {
-        monacoEditor = monaco.editor.create(document.getElementById('editor-container'), {
-            value: "// Select a file from the explorer to view code",
-            language: "typescript",
-            theme: "vs-dark",
-            automaticLayout: true,
-            readOnly: true,
-            minimap: { enabled: false },
-            fontSize: 13,
-            fontFamily: "'JetBrains Mono', monospace"
-        });
-        
-        monaco.editor.defineTheme('custom-dark', {
-            base: 'vs-dark',
-            inherit: true,
-            rules: [],
-            colors: {
-                'editor.background': '#18181b', // matched surface-1
-                'editor.lineHighlightBackground': '#27272a'
-            }
-        });
-        monaco.editor.setTheme('custom-dark');
-        
-        loadTree();
-    });
+function logLine(text, target='terminal-log', isError=false) { const log = document.getElementById(target); const div = document.createElement('div'); div.innerText = text; if (isError) div.className = 'text-red-300'; log.appendChild(div); log.scrollTop = log.scrollHeight; }
+function clearTerminal() { document.getElementById('terminal-log').innerHTML = ''; }
+function setPreview(url) { const iframe = document.getElementById('preview-iframe'); previewUrl = url; localStorage.setItem('preview-url-' + PROJECT_ID, url); document.getElementById('browser-url').innerText = url; iframe.removeAttribute('srcdoc'); iframe.src = url; }
+function showPreviewMessage(message) { const iframe = document.getElementById('preview-iframe'); iframe.removeAttribute('src'); iframe.srcdoc = '<div style=\"height:100vh;display:grid;place-items:center;font:14px Inter,system-ui;color:#475569;background:#f8fafc\">' + message + '</div>'; }
+function refreshIframe() { startPreviewServer(true); }
+async function startPreviewServer(forceRefresh=false) {
+  showPreviewMessage('Starting local Vite preview...');
+  logLine((forceRefresh ? 'Restarting' : 'Starting') + ' preview server for ' + PROJECT_ID);
+  try {
+    const res = await fetch('/api/preview/' + PROJECT_ID + '/start', { method: 'POST' });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Preview server failed to start');
+    setPreview(data.url);
+    logLine('Preview running at ' + data.url);
+  } catch (err) {
+    showPreviewMessage('Preview unavailable. Check the terminal panel for the Vite error.');
+    logLine('ERROR: ' + err.message, 'terminal-log', true);
+  }
+}
 
-    // BUILD STREAM 
-    window.onload = () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('start_build') === 'true') {
-            document.getElementById('build-overlay').classList.add('active');
-            startBuildStream();
-        } else {
-            // Already built, just show iframe
-            document.getElementById('preview-iframe').src = "http://localhost:5173";
-        }
-    };
+require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' }});
+require(['vs/editor/editor.main'], function() {
+  monaco.editor.defineTheme('architect-dark', { base: 'vs-dark', inherit: true, rules: [], colors: { 'editor.background': '#111318', 'editor.lineHighlightBackground': '#1b202a' } });
+  monacoEditor = monaco.editor.create(document.getElementById('editor-container'), { value: '// Select a file from the tree', language: 'typescript', theme: 'architect-dark', automaticLayout: true, readOnly: true, minimap: { enabled: false }, fontSize: 13, fontFamily: 'JetBrains Mono' });
+  loadTree(); if (new URLSearchParams(window.location.search).get('start_build') !== 'true') startPreviewServer();
+});
 
-    function appendLog(text, isError=false) {
-        const log = document.getElementById('terminal-log');
-        const div = document.createElement('div');
-        div.innerText = text;
-        if(isError) div.style.color = '#ef4444';
-        log.appendChild(div);
-        log.scrollTop = log.scrollHeight;
-    }
+window.onload = () => { if (new URLSearchParams(window.location.search).get('start_build') === 'true') startBuildStream(); };
+async function startBuildStream() {
+  document.getElementById('build-overlay').classList.remove('hidden'); document.getElementById('build-overlay').classList.add('flex');
+  document.getElementById('overlay-log').innerHTML = '';
+  try {
+    const res = await fetch('/build', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ project_id: PROJECT_ID }) });
+    const reader = res.body.getReader(); const decoder = new TextDecoder('utf-8'); let buffer = '';
+    while (true) { const {done,value}=await reader.read(); if(done) break; buffer += decoder.decode(value,{stream:true}); const parts=buffer.split('\n\n'); buffer=parts.pop(); for(const line of parts){ if(!line.startsWith('data: ')) continue; let data; try{data=JSON.parse(line.substring(6));}catch{continue;} if(data.status){ document.getElementById('build-status-text').innerText=data.status; logLine('> '+data.status,'overlay-log'); logLine('> '+data.status); } if(data.error){ logLine('ERROR: '+data.error,'overlay-log',true); logLine('ERROR: '+data.error,'terminal-log',true); } if(data.done){ setPreview(data.url); loadTree(); setTimeout(()=>document.getElementById('build-overlay').classList.add('hidden'),800); } } }
+  } catch { logLine('ERROR: Build stream failed.','overlay-log',true); }
+}
+async function loadTree() {
+  try {
+    const res = await fetch('/api/sandbox/' + PROJECT_ID + '/tree');
+    if(!res.ok) return;
+    const tree = await res.json();
+    const root = document.getElementById('tree-root');
+    root.innerHTML='';
+    renderNodes(tree, root, 0);
+    const appFile = findTreeNode(tree, 'src/App.tsx');
+    if (appFile && monacoEditor && monacoEditor.getValue().startsWith('// Select a file')) loadFile(appFile.path);
+  } catch (err) {
+    logLine('ERROR: Could not load file tree. ' + err.message, 'terminal-log', true);
+  }
+}
+function findTreeNode(nodes, path) {
+  for (const node of nodes) {
+    if (node.path === path) return node;
+    if (node.children) { const found = findTreeNode(node.children, path); if (found) return found; }
+  }
+  return null;
+}
+function renderNodes(nodes, container, depth) { nodes.forEach(node => { const el=document.createElement('div'); el.className='flex cursor-pointer items-center gap-2 px-3 py-1.5 text-xs text-slate-400 hover:bg-white/5 hover:text-white'; el.style.paddingLeft=(12+depth*14)+'px'; el.innerHTML=(node.is_dir?iconFolder:iconFile)+'<span class="truncate">'+node.name+'</span>'; if(!node.is_dir){ el.onclick=()=>{ document.querySelectorAll('#tree-root .bg-emerald-950\\/40').forEach(n=>n.classList.remove('bg-emerald-950/40','text-mint')); el.classList.add('bg-emerald-950/40','text-mint'); loadFile(node.path); }; } container.appendChild(el); if(node.children) renderNodes(node.children, container, depth+1); }); }
+async function loadFile(path) {
+  document.getElementById('editor-tab').innerText = path;
+  try {
+    const res = await fetch('/api/sandbox/' + PROJECT_ID + '/file?path=' + encodeURIComponent(path));
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error || 'Could not load file');
+    let lang='typescript';
+    if(path.endsWith('.css')) lang='css'; else if(path.endsWith('.html')) lang='html'; else if(path.endsWith('.json')) lang='json';
+    monaco.editor.setModelLanguage(monacoEditor.getModel(), lang);
+    monacoEditor.setValue(data.content);
+    logLine('Opened ' + path);
+  } catch (err) {
+    monacoEditor.setValue('// Error loading ' + path + '\n// ' + err.message);
+    logLine('ERROR: Could not load ' + path + '. ' + err.message, 'terminal-log', true);
+  }
+}
 
-    async function startBuildStream() {
-        const statusText = document.getElementById('build-status-text');
-        try {
-            const res = await fetch('/build', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ project_id: PROJECT_ID })
-            });
-            const reader = res.body.getReader();
-            const decoder = new TextDecoder('utf-8');
-            let buffer = '';
+window.addEventListener('message', (e) => { if(e.data && e.data.type === 'COMPONENT_CLICKED'){ activeEditPath = e.data.path; document.getElementById('edit-component-name').innerText = e.data.path; document.getElementById('edit-instruction').value = ''; document.getElementById('edit-modal').classList.remove('hidden'); document.getElementById('edit-modal').classList.add('flex'); document.getElementById('edit-instruction').focus(); } });
+function closeEditModal(){ document.getElementById('edit-modal').classList.add('hidden'); }
+async function submitComponentEdit(){ const instruction=document.getElementById('edit-instruction').value.trim(); if(!instruction || !activeEditPath) return; closeEditModal(); document.getElementById('build-overlay').classList.remove('hidden'); document.getElementById('build-overlay').classList.add('flex'); document.getElementById('build-status-text').innerText='AI editing ' + activeEditPath; document.getElementById('overlay-log').innerHTML=''; try{ const res=await fetch('/api/edit-component',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({project_id:PROJECT_ID,file_path:activeEditPath,instruction})}); const data=await res.json(); if(!res.ok) throw new Error(data.error || 'Edit failed'); logLine('Edited ' + activeEditPath); await loadFile(activeEditPath); refreshIframe(); loadTree(); } catch(err){ logLine('ERROR: ' + err.message,'overlay-log',true); } finally{ setTimeout(()=>document.getElementById('build-overlay').classList.add('hidden'),700); } }
+function showPublishModal(){ document.getElementById('publish-modal').classList.remove('hidden'); document.getElementById('publish-modal').classList.add('flex'); }
+function closePublishModal(){ document.getElementById('publish-modal').classList.add('hidden'); }
+async function publishToGithub(){ const user=document.getElementById('gh-user').value.trim(); const repo=document.getElementById('gh-repo').value.trim(); const token=document.getElementById('gh-token').value.trim(); if(!user||!repo||!token){ alert('All fields are required'); return; } closePublishModal(); document.getElementById('build-overlay').classList.remove('hidden'); document.getElementById('build-overlay').classList.add('flex'); document.getElementById('overlay-log').innerHTML=''; document.getElementById('build-status-text').innerText='Publishing to GitHub Pages...'; try{ const res=await fetch('/api/publish',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({project_id:PROJECT_ID,github_username:user,repo_name:repo,github_token:token})}); const data=await res.json(); if(!res.ok) throw new Error(data.error || 'Publish failed'); document.getElementById('live-link').href=data.url; document.getElementById('live-link').innerText=data.url; document.getElementById('success-modal').classList.remove('hidden'); document.getElementById('success-modal').classList.add('flex'); logLine('Published: '+data.url); } catch(err){ logLine('ERROR: '+err.message,'overlay-log',true); } finally{ setTimeout(()=>document.getElementById('build-overlay').classList.add('hidden'),700); } }
 
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-
-                buffer += decoder.decode(value, { stream: true });
-                const parts = buffer.split('\n\n');
-                buffer = parts.pop();
-
-                for (const line of parts) {
-                    if (!line.startsWith('data: ')) continue;
-                    try {
-                        const data = JSON.parse(line.substring(6));
-                        
-                        if (data.status) {
-                            statusText.innerText = data.status;
-                            appendLog("> " + data.status);
-                        }
-                        if (data.error) {
-                            statusText.innerText = "Error encountered!";
-                            statusText.style.color = '#ef4444';
-                            appendLog("ERROR: " + data.error, true);
-                        }
-                        if (data.done) {
-                            statusText.innerText = 'Launch Complete! Opening preview...';
-                            appendLog("> Success, opening iframe...");
-                            setTimeout(() => {
-                                document.getElementById('build-overlay').classList.remove('active');
-                                document.getElementById('preview-iframe').src = "http://localhost:5173";
-                                loadTree(); // Reload tree to show new files
-                            }, 1500);
-                        }
-                    } catch(e) {}
-                }
-            }
-        } catch (err) {
-            statusText.innerText = "Connection lost to build server.";
-            appendLog("ERROR: Request failed.", true);
-        }
-    }
-
-    function refreshIframe() {
-        const iframe = document.getElementById('preview-iframe');
-        iframe.src = iframe.src;
-    }
-
-    // FILE TREE LOGIC
-    async function loadTree() {
-        try {
-            const res = await fetch('/api/sandbox/' + PROJECT_ID + '/tree');
-            if (!res.ok) return; // maybe not built yet
-            const tree = await res.json();
-            const root = document.getElementById('tree-root');
-            root.innerHTML = '';
-            renderNodes(tree, root, 0);
-        } catch (err) {
-            // silent fail if tree not ready
-        }
-    }
-
-    function renderNodes(nodes, container, depth) {
-        nodes.forEach(node => {
-            const el = document.createElement('div');
-            el.className = 'tree-node';
-            el.style.paddingLeft = (16 + (depth * 12)) + 'px';
-            el.innerHTML = (node.is_dir ? iconFolder : iconFile) + '<span>' + node.name + '</span>';
-            
-            if (!node.is_dir) {
-                el.onclick = () => {
-                    document.querySelectorAll('.tree-node').forEach(n => n.classList.remove('active'));
-                    el.classList.add('active');
-                    loadFile(node.path);
-                };
-            }
-            container.appendChild(el);
-            
-            if (node.children) {
-                renderNodes(node.children, container, depth + 1);
-            }
-        });
-    }
-
-    async function loadFile(path) {
-        document.getElementById('editor-tab').innerText = Object.values(path.split(/[\\/]/)).pop();
-        try {
-            const encodedPath = encodeURIComponent(path);
-            const res = await fetch('/api/sandbox/' + PROJECT_ID + '/file?path=' + encodedPath);
-            const data = await res.json();
-            if (res.ok) {
-                let language = "typescript";
-                if(path.endsWith(".css")) language = "css";
-                else if(path.endsWith(".html")) language = "html";
-                else if(path.endsWith(".json")) language = "json";
-                
-                monaco.editor.setModelLanguage(monacoEditor.getModel(), language);
-                monacoEditor.setValue(data.content);
-            } else {
-                monacoEditor.setValue("// Could not load " + path);
-            }
-        } catch (err) {
-            monacoEditor.setValue("// Error loading " + path);
-        }
-    }
+let dragMode=null; document.querySelectorAll('.drag-handle').forEach(h=>h.addEventListener('mousedown',()=>dragMode=h.dataset.resize)); window.addEventListener('mouseup',()=>dragMode=null); window.addEventListener('mousemove',(e)=>{ if(!dragMode) return; const grid=document.getElementById('workspace-grid'); const total=grid.clientWidth; if(dragMode==='left'){ const left=Math.max(180,Math.min(420,e.clientX)); grid.style.gridTemplateColumns=`${left}px 6px minmax(320px,42%) 6px 1fr`; } else { const leftWidth=document.getElementById('sidebar').getBoundingClientRect().width; const editor=Math.max(320,Math.min(total-520,e.clientX-leftWidth-6)); grid.style.gridTemplateColumns=`${leftWidth}px 6px ${editor}px 6px 1fr`; } });
 </script>
 </body>
 </html>

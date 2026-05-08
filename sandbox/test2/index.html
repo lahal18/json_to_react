@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>site_template</title>
+  
+    <script>
+      (function() {
+      const AI_ARCHITECT_BACKEND_URL = "https://my-huggingface-space.hf.space";
+      const AI_ARCHITECT_PROJECT_ID = "test2";
+
+      function reportRuntimeError(errorLog) {
+        if (!errorLog) return;
+        fetch(AI_ARCHITECT_BACKEND_URL + '/report-runtime-error', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ error: String(errorLog), project_id: AI_ARCHITECT_PROJECT_ID })
+        }).then(res => res.json())
+          .then(data => {
+             if (data.status === "healed") {
+                 console.log(" AI Surgeon patched the code! Refreshing in 3 seconds...");
+                 setTimeout(() => window.location.reload(), 3000);
+             }
+          }).catch(err => console.error("Could not reach AI Surgeon:", err));
+      }
+
+      window.addEventListener('error', function(event) {
+        const errorLog = event.error ? event.error.stack : event.message;
+        reportRuntimeError(errorLog);
+      });
+
+      window.addEventListener('unhandledrejection', function(event) {
+        const errorLog = event.reason ? (event.reason.stack || event.reason) : "Unhandled Promise Rejection";
+        reportRuntimeError(errorLog);
+      });
+
+      window.addEventListener('dblclick', function(event) {
+        if (window.parent !== window) {
+          const wrapper = event.target.closest('[data-component-path]');
+          if (wrapper) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            document.querySelectorAll('[data-ai-edit-active="true"]').forEach(el => {
+              el.style.outline = '';
+              el.style.outlineOffset = '';
+              el.removeAttribute('data-ai-edit-active');
+            });
+            
+            const visualTarget = wrapper.firstElementChild || wrapper;
+            visualTarget.style.outline = '3px solid #10b981';
+            visualTarget.style.outlineOffset = '4px';
+            visualTarget.setAttribute('data-ai-edit-active', 'true');
+            setTimeout(() => {
+              visualTarget.style.outline = '';
+              visualTarget.style.outlineOffset = '';
+              visualTarget.removeAttribute('data-ai-edit-active');
+            }, 1800);
+            
+            window.parent.postMessage({
+              type: 'COMPONENT_CLICKED',
+              path: wrapper.getAttribute('data-component-path')
+            }, '*');
+          }
+        }
+      }, true);
+      })();
+    </script>
+    
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

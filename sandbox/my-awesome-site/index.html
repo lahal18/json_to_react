@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>site_template</title>
+  
+    <script>
+      window.addEventListener('error', function(event) {
+        const errorLog = event.error ? event.error.stack : event.message;
+        fetch('https://my-huggingface-space.hf.space/report-runtime-error', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ error: errorLog })
+        }).then(res => res.json())
+          .then(data => {
+             if (data.status === "healed") {
+                 console.log(" AI Surgeon patched the code! Refreshing in 3 seconds...");
+                 setTimeout(() => window.location.reload(), 3000);
+             }
+          }).catch(err => console.error("Could not reach AI Surgeon:", err));
+      });
+
+      window.addEventListener('unhandledrejection', function(event) {
+        const errorLog = event.reason ? (event.reason.stack || event.reason) : "Unhandled Promise Rejection";
+        fetch('https://my-huggingface-space.hf.space/report-runtime-error', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ error: errorLog })
+        });
+      });
+
+      // Component Click Listener for IDE Editor
+      window.addEventListener('click', function(event) {
+        if (window.parent !== window) {
+          const target = event.target.closest('[data-component-path]');
+          if (target) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            document.querySelectorAll('.hover-edit-outline').forEach(el => el.classList.remove('hover-edit-outline'));
+            
+            target.classList.add('hover-edit-outline');
+            target.style.outline = '3px solid #10b981';
+            
+            window.parent.postMessage({
+              type: 'COMPONENT_CLICKED',
+              path: target.getAttribute('data-component-path')
+            }, '*');
+          }
+        }
+      }, true);
+    </script>
+    
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

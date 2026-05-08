@@ -3,12 +3,16 @@ import re
 import json
 import logging
 from flask import Flask, render_template, request, jsonify, Response
+from flask_cors import CORS
 import requests
 from openai import OpenAI
 from json_repair import repair_json
 
 import subprocess
 import shutil
+import socket
+import time
+import urllib.request
 
 # --- Paths for the Generator Integration ---
 # BASE_DIR is already defined in your code as info_gathering
@@ -18,6 +22,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # ==========================================
 # 1. API CONFIGURATION
@@ -60,6 +65,136 @@ GEN_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "generator"))
 SITE_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "generated_site"))
 TARGET_JSON = os.path.join(GEN_DIR, "layout.json")
 SOURCE_JSON = os.path.join(BASE_DIR, "generated_layout.json")
+
+
+def _slugify(value: str, default: str = "project") -> str:
+    safe = re.sub(r"[^a-z0-9]+", "-", (value or "").lower()).strip("-")
+    return safe or default
+
+
+def _sandbox_path(project_id: str) -> str:
+    safe_project_id = _slugify(project_id, "default-project")
+    sandbox_root = os.path.abspath(os.path.join(BASE_DIR, "..", "sandbox"))
+    path = os.path.abspath(os.path.join(sandbox_root, safe_project_id))
+    if not path.lower().startswith(sandbox_root.lower()):
+        raise ValueError("Invalid project id.")
+    return path
+
+
+def _safe_project_file(site_dir: str, file_path: str) -> str:
+    full_path = os.path.abspath(os.path.join(site_dir, file_path or ""))
+    if not full_path.lower().startswith(site_dir.lower()) or not os.path.isfile(full_path):
+        raise ValueError("Invalid file path.")
+    return full_path
+
+
+def _run_command(command, cwd, label, shell=False, check=True):
+    try:
+        result = subprocess.run(
+            command,
+            cwd=cwd,
+            shell=shell,
+            check=check,
+            text=True,
+            capture_output=True,
+        )
+        return result
+    except subprocess.CalledProcessError as exc:
+        output = "\n".join(part for part in [exc.stdout, exc.stderr] if part)
+        logger.error("%s failed: %s", label, output)
+        raise RuntimeError(f"{label} failed. {output[-1200:] if output else exc}") from exc
+    except OSError as exc:
+        logger.error("%s could not start: %s", label, exc)
+        raise RuntimeError(f"{label} could not start: {exc}") from exc
+
+
+def _write_vite_config(site_dir, repo_name=None):
+    base_line = f"  base: '/{_slugify(repo_name, 'site')}/',\n" if repo_name else ""
+    vite_config = f"""import {{ defineConfig }} from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
+
+export default defineConfig({{
+  plugins: [react(), tailwindcss()],
+{base_line}  build: {{ sourcemap: true }}
+}})
+"""
+    with open(os.path.join(site_dir, "vite.config.ts"), "w", encoding="utf-8") as f:
+        f.write(vite_config)
+
+
+def _configure_git_identity(cwd):
+    _run_command(["git", "config", "user.email", "ai-architect@example.local"], cwd, "Git config email", check=False)
+    _run_command(["git", "config", "user.name", "AI Architect"], cwd, "Git config name", check=False)
+
+
+def _npm_command(*args):
+    executable = "npm.cmd" if os.name == "nt" else "npm"
+    return [executable, *args]
+
+
+def _node_command():
+    return "node.exe" if os.name == "nt" else "node"
+
+
+def _vite_command(site_dir, port):
+    vite_bin = os.path.join(site_dir, "node_modules", "vite", "bin", "vite.js")
+    if os.path.exists(vite_bin):
+        return [_node_command(), vite_bin, "--host", "127.0.0.1", "--port", str(port)]
+    return _npm_command("run", "dev", "--", "--host", "127.0.0.1", "--port", str(port))
+
+
+def _find_free_port(start=5173, stop=5200):
+    for port in range(start, stop):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            sock.settimeout(0.2)
+            if sock.connect_ex(("127.0.0.1", port)) != 0:
+                return port
+    raise RuntimeError("No free Vite preview port found.")
+
+
+def _wait_for_url(url, process=None, timeout=20):
+    deadline = time.time() + timeout
+    last_error = ""
+    while time.time() < deadline:
+        if process is not None and process.poll() is not None:
+            return False, f"Vite exited early with code {process.returncode}."
+        try:
+            with urllib.request.urlopen(url, timeout=1.5) as response:
+                if response.status < 500:
+                    return True, ""
+        except Exception as exc:
+            last_error = str(exc)
+        time.sleep(0.4)
+    return False, last_error or "Timed out waiting for Vite."
+
+
+def _start_vite_server(site_dir):
+    port = _find_free_port()
+    url = f"http://127.0.0.1:{port}"
+    log_dir = os.path.join(site_dir, ".ai-architect")
+    os.makedirs(log_dir, exist_ok=True)
+    log_path = os.path.join(log_dir, f"vite-{port}.log")
+    log_file = open(log_path, "w", encoding="utf-8", errors="replace")
+    process = subprocess.Popen(
+        _vite_command(site_dir, port),
+        cwd=site_dir,
+        stdout=log_file,
+        stderr=subprocess.STDOUT,
+        text=True,
+    )
+    ready, error = _wait_for_url(url, process=process, timeout=20)
+    if not ready:
+        try:
+            log_file.flush()
+        except Exception:
+            pass
+        log_excerpt = ""
+        if os.path.exists(log_path):
+            with open(log_path, "r", encoding="utf-8", errors="replace") as f:
+                log_excerpt = f.read()[-1400:]
+        raise RuntimeError(f"Vite preview did not start. {error}\n{log_excerpt}".strip())
+    return url, port
 
 try:
     with open(METADATA_PATH, "r") as f:
@@ -128,10 +263,19 @@ STRICT AST SCHEMA RULES:
 4. PAGE NAMES: Must be strictly PascalCase with ZERO spaces (e.g., "ProductDetails").
 5. NEVER use double quotes inside text strings. If you need to quote something, use single quotes (e.g., "children": "He said 'Hello'"). 
 
+IMAGE RULE: Whenever a component requires an image `src`, you MUST use a live placeholder URL. 
+1.For generic photos: Use "https://picsum.photos/seed/{{random_word}}/800/600"
+2.For clean UI placeholders: Use "https://placehold.co/800x600/e2e8f0/475569?text={{Component+Name}}"
+3.For user avatars: Use "https://ui-avatars.com/api/?name={{First+Last}}&background=random"
+4.For product images: Use "https://placehold.co/800x600/f3f4f6/6b7280?text={{Product+Name}}"
+
+DENSITY RULE: When generating arrays for grids, lists, features, or testimonials, you MUST generate at least 3 to 4 realistic items. Never leave a grid sparsely populated.
+
 COMPONENT LIBRARY:
 {COMPONENT_RULES}
 """
 
+# Call #1 — theme + header + footer + page names with empty layout arrays
 # Call #1 — theme + header + footer + page names with empty layout arrays
 BASE_PROMPT_TEMPLATE = """Given this website requirement summary:
 
@@ -148,7 +292,16 @@ Output ONLY this exact JSON structure (populate the arrays with components from 
   }},
   "layout": {{
     "header": [
-      {{ "type": "Navbar", "props": {{ ... }} }}
+      {{ 
+        "type": "Navbar", 
+        "props": {{ 
+          "logo": "MyBrand",
+          "cta": "Sign Up", 
+          "links": [
+            {{ "label": "Home", "href": "/" }}
+          ]
+        }} 
+      }}
     ],
     "footer": [
       {{ "type": "Footer", "props": {{ ... }} }}
@@ -171,6 +324,7 @@ TASK: Generate ONLY the "layout" component array for the "{page_name}" page.
 This is for a {website_type} website targeting {target_audience}.
 
 CRITICAL: Output ONLY a valid JSON array starting with [ and ending with ]. Do not wrap it in an object.
+COPYWRITING RULE: Generate highly realistic, persuasive, and domain-specific text for all components. Do not use "Lorem Ipsum" or generic placeholders like "Click Here" or "Feature 1". Write actual marketing copy tailored to {website_type}.
 
 Example Structure:
 [
@@ -224,19 +378,32 @@ def _validate_layout_tree(layout_nodes, allowed_components):
         return False, "Layout must be a JSON array."
 
     for node in layout_nodes:
-        # Check for missing type
+        # 1. Check for missing type
         comp_type = node.get("type")
         if not comp_type:
-            # Maybe it used 'component' by mistake?
             if "component" in node:
                 return False, "Used 'component' instead of 'type' key."
             return False, "Node is missing the 'type' key."
         
-        # Check for hallucination
+        # 2. Check for hallucinated components
         if comp_type not in allowed_components:
             return False, f"Hallucinated component used: '{comp_type}'. You must use an equivalent from the library."
 
-        # Recursively check nested children
+        # 3. NEW: Block raw objects/arrays in ReactNode props!
+        props = node.get("props", {})
+        # Whitelist of props that are ALLOWED to be arrays of objects
+        allowed_object_props = {"links", "sections", "items", "socialLinks"}
+        
+        for prop_name, prop_value in props.items():
+            if prop_name not in allowed_object_props:
+                # If it's a dict
+                if isinstance(prop_value, dict):
+                    return False, f"CRITICAL: Prop '{prop_name}' in {comp_type} cannot be a JSON object. It must be a simple primitive string."
+                # If it's an array of dicts (like the bad CTA we saw)
+                if isinstance(prop_value, list) and len(prop_value) > 0 and isinstance(prop_value[0], dict):
+                    return False, f"CRITICAL: Prop '{prop_name}' in {comp_type} cannot be an array of objects. Please pass a simple string (e.g. \"{prop_name}\": \"Click Here\")."
+
+        # 4. Recursively check nested children
         if "children" in node and isinstance(node["children"], list):
             is_valid, err = _validate_layout_tree(node["children"], allowed_components)
             if not is_valid:
@@ -707,13 +874,12 @@ def generate():
 def build_site():
     data = request.get_json() or {}
     project_id = data.get("project_id", "default_project")
-    
-    SITE_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "sandbox", project_id))
+    site_dir = _sandbox_path(project_id)
 
     def build_stream():
         try:
             # 1. Move JSON
-            yield f"data: {json.dumps({'status': '🚚 Copying layout.json to generator...'})}\n\n"
+            yield f"data: {json.dumps({'status': 'Copying layout.json to generator...', 'phase': 'Initializing Workspace'})}\n\n"
             # It's better to process JSON in GEN_DIR, but since app.py reads SOURCE_JSON from its dir
             if os.path.exists(SOURCE_JSON):
                 shutil.copy(SOURCE_JSON, TARGET_JSON)
@@ -722,10 +888,10 @@ def build_site():
                 return
 
             # 2. Run Python Generator and stream output
-            yield f"data: {json.dumps({'status': '⚙️ Generating React components...'})}\n\n"
+            yield f"data: {json.dumps({'status': 'Generating React components...', 'phase': 'Generating React Components'})}\n\n"
             
             gen_proc = subprocess.Popen(
-                ['python', 'generator.py', '--output-dir', SITE_DIR, '--project-id', project_id], 
+                ['python', 'generator.py', '--output-dir', site_dir, '--project-id', project_id],
                 cwd=GEN_DIR, 
                 stdout=subprocess.PIPE, 
                 stderr=subprocess.STDOUT, 
@@ -744,17 +910,19 @@ def build_site():
                 return
 
             # 3. NPM Install
-            yield f"data: {json.dumps({'status': '📦 Installing NPM dependencies...'})}\n\n"
-            subprocess.run(['npm', 'install'], cwd=SITE_DIR, shell=True)
+            yield f"data: {json.dumps({'status': 'Installing NPM dependencies...', 'phase': 'Installing Dependencies'})}\n\n"
+            install_result = _run_command(_npm_command("install"), cwd=site_dir, label="npm install", check=False)
+            if install_result.returncode != 0:
+                output = "\n".join(part for part in [install_result.stdout, install_result.stderr] if part)
+                yield f"data: {json.dumps({'error': f'npm install failed. {output[-1000:]}'})}\n\n"
+                return
 
             # 4. Start Dev Server Configuration
-            yield f"data: {json.dumps({'status': '🚀 Build generated successfully! Starting Dev Server...'})}\n\n"
+            yield f"data: {json.dumps({'status': 'Starting Vite dev server...', 'phase': 'Launching Preview'})}\n\n"
             
-            # Find and kill any existing node process in Windows (on port 5173 ideally)
-            # For simplicity, we just run the server. If the user clicks multiple times, it might fail to bind 5173.
-            subprocess.Popen(['npm', 'run', 'dev'], cwd=SITE_DIR, shell=True)
+            url, port = _start_vite_server(site_dir)
             
-            yield f"data: {json.dumps({'done': True, 'url': 'http://localhost:5173'})}\n\n"
+            yield f"data: {json.dumps({'done': True, 'url': url, 'port': port, 'phase': 'Ready'})}\n\n"
 
         except Exception as e:
             logger.exception("Build pipeline failed.")
@@ -763,30 +931,205 @@ def build_site():
     return Response(build_stream(), mimetype="text/event-stream")
 
 
+@app.route("/api/preview/<project_id>/start", methods=["POST"])
+def start_project_preview(project_id):
+    try:
+        site_dir = _sandbox_path(project_id)
+        if not os.path.exists(site_dir):
+            return jsonify({"error": "Project not found."}), 404
+        if not os.path.exists(os.path.join(site_dir, "package.json")):
+            return jsonify({"error": "This project has not been generated yet."}), 400
+
+        if not os.path.exists(os.path.join(site_dir, "node_modules")):
+            install_result = _run_command(_npm_command("install"), site_dir, "npm install", check=False)
+            if install_result.returncode != 0:
+                output = "\n".join(part for part in [install_result.stdout, install_result.stderr] if part)
+                return jsonify({"error": f"npm install failed. {output[-1000:]}"}), 500
+
+        url, port = _start_vite_server(site_dir)
+        return jsonify({"url": url, "port": port})
+    except Exception as exc:
+        logger.exception("Preview server failed to start.")
+        return jsonify({"error": str(exc)}), 500
+
+
 @app.route("/report-runtime-error", methods=["POST"])
 def report_runtime_error():
-    data = request.get_json()
+    data = request.get_json() or {}
     error_message = data.get("error", "Unknown runtime error")
     project_id = data.get("project_id", "default_project")
-    
-    print("\n" + "🚨"*10)
-    print("RUNTIME ERROR DETECTED BY BROWSER TELEMETRY:")
-    print(error_message)
-    print("PROJECT:", project_id)
-    print("🚨"*10 + "\n")
 
-    SITE_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "sandbox", project_id))
-    
-    # Run the same healing logic we built earlier
-    is_healed, message = heal_react_code(error_message, SITE_DIR)
-    
-    if is_healed:
-        print(f"🩹 AI Surgeon applied fix: {message}")
-        print("🔄 Please refresh your browser to test the fix.")
-        return jsonify({"status": "healed", "message": message}), 200
-    else:
-        print(f"❌ AI Surgeon failed to fix runtime error: {message}")
+    logger.error("Runtime error reported for %s: %s", project_id, error_message)
+    site_dir = _sandbox_path(project_id)
+    is_healed, message = heal_react_code(error_message, site_dir)
+
+    if not is_healed:
+        logger.error("AI Surgeon failed to fix runtime error: %s", message)
         return jsonify({"status": "failed", "message": message}), 500
+
+    github_user = os.environ.get("GITHUB_USER")
+    repo_name = os.environ.get("GITHUB_REPO")
+    github_token = os.environ.get("GITHUB_TOKEN")
+
+    if github_user and repo_name and github_token:
+        try:
+            remote_url = f"https://{github_user}:{github_token}@github.com/{github_user}/{repo_name}.git"
+            _run_command(['git', 'init'], site_dir, "Git init source")
+            _configure_git_identity(site_dir)
+            _run_command(['git', 'remote', 'remove', 'origin'], site_dir, "Git remove origin", check=False)
+            _run_command(['git', 'remote', 'add', 'origin', remote_url], site_dir, "Git add origin")
+            _run_command(['git', 'checkout', '-B', 'ai-source'], site_dir, "Git checkout ai-source")
+            _run_command(['git', 'add', '.'], site_dir, "Git add auto-heal changes")
+            commit_result = _run_command(['git', 'commit', '-m', 'AI Auto-Fix'], site_dir, "Git commit auto-heal", check=False)
+            if commit_result.returncode == 0:
+                _run_command(['git', 'push', '-f', remote_url, 'ai-source'], site_dir, "Git push auto-heal source")
+
+            _write_vite_config(site_dir, repo_name)
+            _run_command(_npm_command("run", "build"), site_dir, "npm run build")
+            dist_dir = os.path.join(site_dir, "dist")
+            _run_command(['git', 'init'], dist_dir, "Git init dist")
+            _configure_git_identity(dist_dir)
+            _run_command(['git', 'checkout', '-B', 'main'], dist_dir, "Git checkout main")
+            _run_command(['git', 'add', '.'], dist_dir, "Git add dist")
+            _run_command(['git', 'commit', '-m', 'AI Auto-Fix'], dist_dir, "Git commit dist", check=False)
+            _run_command(['git', 'push', '-f', remote_url, 'main'], dist_dir, "Git push dist")
+        except Exception as git_error:
+            logger.exception("Auto-heal GitHub push failed.")
+            return jsonify({"status": "healed", "message": message, "publish_warning": str(git_error)}), 200
+
+    return jsonify({"status": "healed", "message": message}), 200
+    
+@app.route("/api/edit-component", methods=["POST"])
+def edit_component():
+    data = request.get_json() or {}
+    project_id = data.get("project_id", "default_project")
+    file_path = data.get("file_path")
+    instruction = data.get("instruction")
+
+    if not file_path or not instruction:
+        return jsonify({"error": "file_path and instruction are required."}), 400
+
+    site_dir = _sandbox_path(project_id)
+    try:
+        full_path = _safe_project_file(site_dir, file_path)
+    except ValueError as exc:
+        return jsonify({"error": str(exc)}), 400
+
+    with open(full_path, "r", encoding="utf-8") as f:
+        code = f.read()
+
+    prompt = f"""You are an expert React developer. Modify this component based on the instruction.
+Instruction: {instruction}
+
+Original Code:
+```tsx
+{code}
+```
+
+CRITICAL: Return ONLY the raw, complete modified code. Preserve working imports, exports, props, and existing behavior unless the instruction explicitly changes them. Do not include markdown fences or any explanation."""
+
+    try:
+        res = nvidia_client.chat.completions.create(
+            model=HEALING_MODEL,
+            messages=[
+                {"role": "system", "content": "You are a code editor. Output ONLY raw, valid code."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.2,
+            max_tokens=4000,
+            stream=False,
+            extra_body={
+                "reasoning_budget": 0,
+                "chat_template_kwargs": {"enable_thinking": False},
+            }
+        )
+    except Exception as exc:
+        logger.exception("Component edit failed.")
+        return jsonify({"error": str(exc)}), 500
+
+    raw_code = res.choices[0].message.content or ""
+    if "</think>" in raw_code:
+        raw_code = raw_code.split("</think>")[-1].strip()
+
+    match = re.search(r'```(?:tsx|ts|jsx|js|javascript|typescript|html|css)?\s(.*?)```', raw_code, re.DOTALL)
+    raw_code = match.group(1).strip() if match else raw_code.strip()
+
+    if not raw_code:
+        return jsonify({"error": "AI returned an empty component."}), 500
+
+    with open(full_path, "w", encoding="utf-8") as f:
+        f.write(raw_code)
+
+    return jsonify({"status": "success", "file_path": file_path})
+
+
+@app.route("/api/publish", methods=["POST"])
+def publish():
+    data = request.get_json() or {}
+    project_id = data.get("project_id", "default_project")
+    github_user = _slugify(data.get("github_username"), "")
+    repo_name = _slugify(data.get("repo_name"), "")
+    github_token = data.get("github_token")
+
+    if not github_user or not repo_name or not github_token:
+        return jsonify({"error": "GitHub username, repository name, and token are required."}), 400
+
+    site_dir = _sandbox_path(project_id)
+    if not os.path.exists(site_dir):
+        return jsonify({"error": "Project not found."}), 404
+
+    os.environ["GITHUB_USER"] = github_user
+    os.environ["GITHUB_REPO"] = repo_name
+    os.environ["GITHUB_TOKEN"] = github_token
+
+    try:
+        _write_vite_config(site_dir, repo_name)
+        _run_command(_npm_command("run", "build"), site_dir, "npm run build")
+
+        dist_dir = os.path.join(site_dir, "dist")
+        remote_url = f"https://{github_user}:{github_token}@github.com/{github_user}/{repo_name}.git"
+
+        _run_command(['git', 'init'], dist_dir, "Git init dist")
+        _configure_git_identity(dist_dir)
+        _run_command(['git', 'checkout', '-B', 'main'], dist_dir, "Git checkout main")
+        _run_command(['git', 'add', '.'], dist_dir, "Git add dist")
+        _run_command(['git', 'commit', '-m', 'Deploy'], dist_dir, "Git commit dist")
+        _run_command(['git', 'push', '-f', remote_url, 'main'], dist_dir, "Git push dist")
+
+        _run_command(['git', 'init'], site_dir, "Git init source")
+        _configure_git_identity(site_dir)
+        _run_command(['git', 'remote', 'remove', 'origin'], site_dir, "Git remove origin", check=False)
+        _run_command(['git', 'remote', 'add', 'origin', remote_url], site_dir, "Git add source origin")
+        _run_command(['git', 'checkout', '-B', 'ai-source'], site_dir, "Git checkout ai-source")
+        _run_command(['git', 'add', '.'], site_dir, "Git add source")
+        _run_command(['git', 'commit', '-m', 'Source snapshot for AI Auto-Healing'], site_dir, "Git commit source", check=False)
+        _run_command(['git', 'push', '-f', remote_url, 'ai-source'], site_dir, "Git push source", check=False)
+
+        live_url = f"https://{github_user}.github.io/{repo_name}/"
+        return jsonify({"status": "success", "url": live_url})
+    except Exception as exc:
+        logger.exception("Publish failed.")
+        return jsonify({"error": str(exc)}), 500
+
+@app.route("/api/init-project", methods=["POST"])
+def init_project():
+    data = request.get_json() or {}
+    project_name = data.get("project_name", "my-project")
+    safe_name = _slugify(project_name, "project")
+    sandbox_dir = os.path.abspath(os.path.join(BASE_DIR, "..", "sandbox"))
+    os.makedirs(sandbox_dir, exist_ok=True)
+    
+    unique_name = safe_name
+    counter = 1
+    
+    # 2. Check if a folder with this name already exists. 
+    # If yes, add a number and check again (e.g., my-project-1, my-project-2)
+    while os.path.exists(os.path.join(sandbox_dir, unique_name)):
+        unique_name = f"{safe_name}-{counter}"
+        counter += 1
+        
+    # Return the guaranteed unique name to the frontend
+    return jsonify({"project_id": unique_name})
 
 @app.route("/api/projects", methods=["GET"])
 def list_projects():
@@ -802,7 +1145,7 @@ def ide_view(project_id):
 
 @app.route("/api/sandbox/<project_id>/tree")
 def sandbox_tree(project_id):
-    site_dir = os.path.abspath(os.path.join(BASE_DIR, "..", "sandbox", project_id))
+    site_dir = _sandbox_path(project_id)
     if not os.path.exists(site_dir):
         return jsonify({"error": "Project not found"}), 404
 
@@ -815,7 +1158,7 @@ def sandbox_tree(project_id):
             is_dir = os.path.isdir(path)
             node = {
                 "name": name,
-                "path": os.path.relpath(path, site_dir),
+                "path": os.path.relpath(path, site_dir).replace('\\', '/'),
                 "is_dir": is_dir
             }
             if is_dir:
@@ -828,13 +1171,17 @@ def sandbox_tree(project_id):
 @app.route("/api/sandbox/<project_id>/file")
 def get_sandbox_file(project_id):
     file_path = request.args.get("path")
-    site_dir = os.path.abspath(os.path.join(BASE_DIR, "..", "sandbox", project_id))
-    full_path = os.path.abspath(os.path.join(site_dir, file_path))
-    
-    if not full_path.lower().startswith(site_dir.lower()) or not os.path.exists(full_path) or not os.path.isfile(full_path):
+    site_dir = _sandbox_path(project_id)
+
+    if not file_path:
+        return jsonify({"error": "Missing file path"}), 400
+
+    try:
+        full_path = _safe_project_file(site_dir, file_path)
+    except ValueError:
         return jsonify({"error": "Invalid file path"}), 400
         
-    with open(full_path, "r", encoding="utf-8") as f:
+    with open(full_path, "r", encoding="utf-8", errors="replace") as f:
         content = f.read()
     return jsonify({"content": content})
 

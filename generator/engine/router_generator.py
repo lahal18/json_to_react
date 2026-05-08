@@ -14,9 +14,15 @@ def generate_router(pages, header_jsx="", footer_jsx="", layout_components=None)
         layout_imports = f'import {{ {", ".join(sorted(layout_components))} }} from "./components"'
 
     routes = []
-    for p in pages:
+    # Check if the AI actually generated a page named "Home"
+    has_home = any(p["name"].lower() == "home" for p in pages)
+
+    for i, p in enumerate(pages):
         name = p["name"]
-        if name.lower() == "home":
+        
+        # Make it the root path IF it's named "home", 
+        # OR if it's the first page and the AI didn't create a "home" page.
+        if name.lower() == "home" or (i == 0 and not has_home):
             path = "/"
         else:
             path = f"/{name.lower()}"
@@ -36,7 +42,7 @@ import {{ BrowserRouter, Routes, Route }} from "react-router-dom"
 
 export default function App() {{
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={{import.meta.env.BASE_URL}}>
 {header_jsx}
       <main className="min-h-screen">
         <Routes>

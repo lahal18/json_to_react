@@ -2,6 +2,7 @@ import json
 import os
 import shutil
 import subprocess
+import argparse
 
 from engine.layout_normalizer import normalize_layout
 from engine.validator import validate_layout
@@ -16,9 +17,10 @@ from engine.generate_component_index import generate_component_index
 
 
 
-def inject_telemetry(site_dir):
-    """Automatically injects the local GlitchTip-Lite script into the generated React app."""
+def inject_telemetry(site_dir, project_id):
+    """Inject runtime telemetry and double-click visual editing into the generated React app."""
     index_path = os.path.join(site_dir, 'index.html')
+    public_backend_url = os.environ.get("PUBLIC_BACKEND_URL", "https://my-huggingface-space.hf.space").rstrip("/")
     
     if not os.path.exists(index_path):
         print(f" [WARNING] Could not find {index_path}. Telemetry script was not injected.")
@@ -28,15 +30,18 @@ def inject_telemetry(site_dir):
     with open(index_path, 'r', encoding='utf-8') as f:
         html_content = f.read()
 
-    # 2. The Telemetry Payload
     telemetry_script = """
     <script>
-      window.addEventListener('error', function(event) {
-        const errorLog = event.error ? event.error.stack : event.message;
-        fetch('http://localhost:5000/report-runtime-error', {
+      (function() {
+      const AI_ARCHITECT_BACKEND_URL = "__PUBLIC_BACKEND_URL__";
+      const AI_ARCHITECT_PROJECT_ID = "__PROJECT_ID__";
+
+      function reportRuntimeError(errorLog) {
+        if (!errorLog) return;
+        fetch(AI_ARCHITECT_BACKEND_URL + '/report-runtime-error', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ error: errorLog })
+          body: JSON.stringify({ error: String(errorLog), project_id: AI_ARCHITECT_PROJECT_ID })
         }).then(res => res.json())
           .then(data => {
              if (data.status === "healed") {
@@ -44,18 +49,51 @@ def inject_telemetry(site_dir):
                  setTimeout(() => window.location.reload(), 3000);
              }
           }).catch(err => console.error("Could not reach AI Surgeon:", err));
+      }
+
+      window.addEventListener('error', function(event) {
+        const errorLog = event.error ? event.error.stack : event.message;
+        reportRuntimeError(errorLog);
       });
 
       window.addEventListener('unhandledrejection', function(event) {
         const errorLog = event.reason ? (event.reason.stack || event.reason) : "Unhandled Promise Rejection";
-        fetch('http://localhost:5000/report-runtime-error', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ error: errorLog })
-        });
+        reportRuntimeError(errorLog);
       });
+
+      window.addEventListener('dblclick', function(event) {
+        if (window.parent !== window) {
+          const wrapper = event.target.closest('[data-component-path]');
+          if (wrapper) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            document.querySelectorAll('[data-ai-edit-active="true"]').forEach(el => {
+              el.style.outline = '';
+              el.style.outlineOffset = '';
+              el.removeAttribute('data-ai-edit-active');
+            });
+            
+            const visualTarget = wrapper.firstElementChild || wrapper;
+            visualTarget.style.outline = '3px solid #10b981';
+            visualTarget.style.outlineOffset = '4px';
+            visualTarget.setAttribute('data-ai-edit-active', 'true');
+            setTimeout(() => {
+              visualTarget.style.outline = '';
+              visualTarget.style.outlineOffset = '';
+              visualTarget.removeAttribute('data-ai-edit-active');
+            }, 1800);
+            
+            window.parent.postMessage({
+              type: 'COMPONENT_CLICKED',
+              path: wrapper.getAttribute('data-component-path')
+            }, '*');
+          }
+        }
+      }, true);
+      })();
     </script>
-    """
+    """.replace("__PUBLIC_BACKEND_URL__", public_backend_url).replace("__PROJECT_ID__", project_id)
 
     # 3. Inject it right before the closing </head> tag
     if '</head>' in html_content:
@@ -72,11 +110,20 @@ def inject_telemetry(site_dir):
 
 
 # ----------------------------------------------------
+# ----------------------------------------------------
 # PATH CONFIGURATION
 # ----------------------------------------------------
-SITE_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "generated_site"))
-SITE_TEMPLATE = "../site_template"
-GENERATED_SITE = "../generated_site"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Parse the arguments sent by app.py
+parser = argparse.ArgumentParser()
+parser.add_argument('--output-dir', type=str, default=os.path.join(BASE_DIR, "..", "generated_site"))
+parser.add_argument('--project-id', type=str, default="default_project")
+args, unknown = parser.parse_known_args()
+
+GENERATED_SITE = args.output_dir
+SITE_DIR = os.path.abspath(GENERATED_SITE)
+SITE_TEMPLATE = os.path.join(BASE_DIR, "..", "site_template")
 
 SRC_PATH = os.path.join(GENERATED_SITE, "src")
 PAGES_PATH = os.path.join(SRC_PATH, "pages")
@@ -149,12 +196,12 @@ validate_layout(footer_nodes, allowed)
 layout_components = set()
 
 header_jsx = "\n".join(
-    generate_component(node, metadata, layout_components, allowed)
+    generate_component(node, metadata, layout_components, allowed, registry=registry)
     for node in header_nodes
 )
 
 footer_jsx = "\n".join(
-    generate_component(node, metadata, layout_components, allowed)
+    generate_component(node, metadata, layout_components, allowed, registry=registry)
     for node in footer_nodes
 )
 
@@ -184,7 +231,8 @@ for page in pages:
             node,
             metadata,
             used_components,
-            allowed
+            allowed,
+            registry=registry
         )
         for node in layout_nodes
     )
@@ -275,14 +323,8 @@ with open(app_path, "w") as f:
 
 
 
-# 1. Get the directory where generator.py currently lives
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-
-# 2. Go up one level, and then into 'generated_site'
-SITE_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, "..", "generated_site"))
-
 # 3. Inject the telemetry script into the correct index.html
-inject_telemetry(SITE_ROOT)
+inject_telemetry(SITE_DIR, args.project_id)
 
 print("[SUCCESS] Site generation complete!")
 
@@ -301,6 +343,7 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  build: { sourcemap: true }
 })
 """
 with open(os.path.join(GENERATED_SITE, "vite.config.ts"), "w") as f:
@@ -314,11 +357,10 @@ with open(os.path.join(SRC_PATH, "index.css"), "w") as f:
 # 3. Automatically run NPM Install for the required packages
 print("Installing NPM packages (this might take a few seconds)...")
 try:
-    # We use shell=True on Windows to ensure npm commands are recognized
+    npm_command = "npm.cmd" if os.name == "nt" else "npm"
     subprocess.run(
-        ["npm", "install", "-D" ,"tailwindcss", "@tailwindcss/vite","@types/node", "@types/react", "@types/react-dom"],
+        [npm_command, "install", "-D" ,"tailwindcss", "@tailwindcss/vite","@types/node", "@types/react", "@types/react-dom"],
         cwd=GENERATED_SITE,
-        shell=True,
         check=True
     )
     print("Dependencies installed successfully!")

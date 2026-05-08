@@ -8,36 +8,14 @@
       {
         "type": "Navbar",
         "props": {
-          "logo": "WatchCo",
-          "children": "Watches",
-          "className": "bg-indigo-600 text-white p-4 shadow-md",
+          "logo": "MyBrand",
+          "cta": "Sign Up",
           "links": [
             {
               "label": "Home",
               "href": "/"
-            },
-            {
-              "label": "Shop",
-              "href": "/shop"
-            },
-            {
-              "label": "About",
-              "href": "/about"
-            },
-            {
-              "label": "Contact",
-              "href": "/contact"
             }
-          ],
-          "cta": [
-            {
-              "label": "Login",
-              "href": "/login",
-              "variant": "outline"
-            }
-          ],
-          "sticky": true,
-          "transparent": false
+          ]
         }
       }
     ],
@@ -45,70 +23,30 @@
       {
         "type": "Footer",
         "props": {
-          "className": "bg-gray-100 text-gray-600 py-6",
-          "logo": "WatchCo",
-          "copyright": "\u00a9 2025 WatchCo. All rights reserved.",
+          "className": "text-center py-6 text-sm text-gray-500",
+          "logo": "MyBrand",
+          "copyright": "\u00a9 2023 MyBrand. All rights reserved.",
           "sections": [
             {
-              "title": "Quick Links",
+              "label": "Products",
               "items": [
                 {
-                  "label": "Home",
-                  "href": "/"
-                },
-                {
-                  "label": "Shop",
-                  "href": "/shop"
-                },
-                {
-                  "label": "Blog",
-                  "href": "/blog"
-                }
-              ]
-            },
-            {
-              "title": "Legal",
-              "items": [
-                {
-                  "label": "Privacy Policy",
-                  "href": "/privacy"
-                },
-                {
-                  "label": "Terms",
-                  "href": "/terms"
-                }
-              ]
-            },
-            {
-              "title": "Social",
-              "items": [
-                {
-                  "label": "Instagram",
-                  "href": "https://instagram.com/watchco"
-                },
-                {
-                  "label": "Twitter",
-                  "href": "https://twitter.com/watchco"
-                },
-                {
-                  "label": "Facebook",
-                  "href": "https://facebook.com/watchco"
+                  "label": "Toys",
+                  "href": "/toys"
                 }
               ]
             }
           ],
           "socialLinks": [
             {
-              "icon": "Instagram",
-              "url": "https://instagram.com/watchco"
+              "label": "Instagram",
+              "href": "https://instagram.com/mybrand",
+              "icon": "InstagramIcon"
             },
             {
-              "icon": "Twitter",
-              "url": "https://twitter.com/watchco"
-            },
-            {
-              "icon": "Facebook",
-              "url": "https://facebook.com/watchco"
+              "label": "YouTube",
+              "href": "https://youtube.com/mybrand",
+              "icon": "YouTubeIcon"
             }
           ]
         }
@@ -117,234 +55,306 @@
   },
   "pages": [
     {
-      "name": "SingleShowcasePage",
+      "name": "Home",
       "layout": [
         {
           "type": "Hero",
           "props": {
-            "title": "Discover Timepieces",
-            "subtitle": "Elegant watches for discerning individuals",
-            "className": "text-center py-24 bg-indigo-50"
+            "title": "Welcome to Playtime Paradise",
+            "subtitle": "Endless fun and learning for curious kids",
+            "className": "text-center text-indigo-800 bg-gradient-to-r from-pink-500 to-yellow-500 text-white",
+            "background": "https://placehold.co/1200x600/f3f4f6/6b7280?text=Playtime+Paradise",
+            "textAlign": "center",
+            "size": "xl"
           }
         },
         {
           "type": "Section",
           "props": {
-            "className": "max-w-4xl mx-auto px-4"
+            "padding": 8,
+            "backgroundColor": "white"
           },
           "children": [
             {
+              "type": "Heading",
+              "props": {
+                "children": "Explore Our Toy Collection",
+                "level": 2,
+                "className": "text-3xl font-bold text-indigo-700 mb-4",
+                "color": "indigo",
+                "align": "center"
+              }
+            },
+            {
               "type": "Grid",
               "props": {
-                "cols": 1,
-                "gap": 8
+                "cols": 3,
+                "gap": 6,
+                "className": "grid gap-4"
               },
               "children": [
                 {
                   "type": "Card",
                   "props": {
-                    "className": "bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow",
-                    "rounded": "xl",
-                    "shadow": "xl"
+                    "className": "bg-pink-50 rounded-lg shadow-md hover:shadow-xl transition-shadow",
+                    "rounded": "lg",
+                    "shadow": "md"
                   },
                   "children": [
                     {
                       "type": "Image",
                       "props": {
-                        "src": "/images/watch-hero.jpg",
-                        "alt": "Premium Watch",
-                        "className": "w-full h-96 object-cover rounded-t-xl",
-                        "rounded": "xl"
+                        "src": "https://placehold.co/300x200/e2e8f0/6b7280?text=Building+Blocks",
+                        "alt": "Building Blocks Set",
+                        "className": "rounded-t-lg"
                       }
                     },
                     {
-                      "type": "Card",
+                      "type": "Heading",
                       "props": {
-                        "className": "p-6 flex flex-col items-center text-center"
-                      },
-                      "children": [
-                        {
-                          "type": "Badge",
-                          "props": {
-                            "children": "Premium",
-                            "variant": "solid",
-                            "size": "lg",
-                            "rounded": "full",
-                            "className": "bg-indigo-600 text-white mb-4"
-                          }
-                        },
-                        {
-                          "type": "Heading",
-                          "props": {
-                            "children": "Astronomical Watch",
-                            "level": 2,
-                            "className": "text-2xl font-bold text-indigo-800 mb-2"
-                          }
-                        },
-                        {
-                          "type": "TextBlock",
-                          "props": {
-                            "children": "Precision engineered with sapphire crystal and titanium case for ultimate durability and style.",
-                            "className": "text-gray-600 text-lg mb-6"
-                          }
-                        },
-                        {
-                          "type": "FlexRow",
-                          "props": {
-                            "justify": "center",
-                            "gap": 4
-                          },
-                          "children": [
-                            {
-                              "type": "Badge",
-                              "props": {
-                                "children": "$1,299",
-                                "variant": "solid",
-                                "size": "md",
-                                "rounded": "md",
-                                "className": "bg-gray-100 text-gray-700 font-medium"
-                              }
-                            },
-                            {
-                              "type": "Badge",
-                              "props": {
-                                "children": "Explore Collection",
-                                "variant": "solid",
-                                "size": "md",
-                                "rounded": "md",
-                                "className": "bg-indigo-600 text-white px-4 py-2 rounded-md font-medium hover:bg-indigo-700 transition-colors"
-                              }
-                            }
-                          ]
-                        }
-                      ]
+                        "children": "Building Blocks",
+                        "level": 3,
+                        "className": "text-xl font-semibold text-gray-800 py-2"
+                      }
+                    },
+                    {
+                      "type": "TextBlock",
+                      "props": {
+                        "children": "Develop creativity and fine motor skills with our colorful building blocks set. Perfect for ages 3-8!",
+                        "className": "text-gray-600 py-2",
+                        "size": "sm"
+                      }
+                    },
+                    {
+                      "type": "Badge",
+                      "props": {
+                        "children": "Ages 3+",
+                        "variant": "secondary",
+                        "size": "sm"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "Card",
+                  "props": {
+                    "className": "bg-blue-50 rounded-lg shadow-md hover:shadow-xl transition-shadow",
+                    "rounded": "lg",
+                    "shadow": "md"
+                  },
+                  "children": [
+                    {
+                      "type": "Image",
+                      "props": {
+                        "src": "https://placehold.co/300x200/e2e8f0/6b7280?text=Stuffed+Animals",
+                        "alt": "Stuffed Animals Collection",
+                        "className": "rounded-t-lg"
+                      }
+                    },
+                    {
+                      "type": "Heading",
+                      "props": {
+                        "children": "Stuffed Animals",
+                        "level": 3,
+                        "className": "text-xl font-semibold text-gray-800 py-2"
+                      }
+                    },
+                    {
+                      "type": "TextBlock",
+                      "props": {
+                        "children": "Soft, cuddly companions that become best friends for bedtime and playtime adventures.",
+                        "className": "text-gray-600 py-2",
+                        "size": "sm"
+                      }
+                    },
+                    {
+                      "type": "Badge",
+                      "props": {
+                        "children": "Premium Quality",
+                        "variant": "secondary",
+                        "size": "sm"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "Card",
+                  "props": {
+                    "className": "bg-green-50 rounded-lg shadow-md hover:shadow-xl transition-shadow",
+                    "rounded": "lg",
+                    "shadow": "md"
+                  },
+                  "children": [
+                    {
+                      "type": "Image",
+                      "props": {
+                        "src": "https://placehold.co/300x200/e2e8f0/6b7280?text=STEM+Kits",
+                        "alt": "STEM Learning Kits",
+                        "className": "rounded-t-lg"
+                      }
+                    },
+                    {
+                      "type": "Heading",
+                      "props": {
+                        "children": "STEM Learning Kits",
+                        "level": 3,
+                        "className": "text-xl font-semibold text-gray-800 py-2"
+                      }
+                    },
+                    {
+                      "type": "TextBlock",
+                      "props": {
+                        "children": "Hands-on science experiments that spark curiosity and make learning magical.",
+                        "className": "text-gray-600 py-2",
+                        "size": "sm"
+                      }
+                    },
+                    {
+                      "type": "Badge",
+                      "props": {
+                        "children": "Eco-Friendly",
+                        "variant": "secondary",
+                        "size": "sm"
+                      }
                     }
                   ]
                 }
               ]
+            },
+            {
+              "type": "Section",
+              "props": {
+                "padding": 12,
+                "backgroundColor": "yellow-50"
+              },
+              "children": [
+                {
+                  "type": "Heading",
+                  "props": {
+                    "children": "Why Parents Love Playtime Paradise",
+                    "level": 2,
+                    "className": "text-2xl font-bold text-indigo-700 mb-3 text-center",
+                    "color": "indigo",
+                    "align": "center"
+                  }
+                },
+                {
+                  "type": "FlexColumn",
+                  "props": {
+                    "className": "max-w-3xl mx-auto space-y-4",
+                    "align": "center",
+                    "justify": "center"
+                  },
+                  "children": [
+                    {
+                      "type": "Icon",
+                      "props": {
+                        "name": "Star",
+                        "className": "text-yellow-400 w-12 h-12",
+                        "size": "sm"
+                      }
+                    },
+                    {
+                      "type": "TextBlock",
+                      "props": {
+                        "children": "Safe Materials",
+                        "className": "text-lg font-medium text-gray-800",
+                        "size": "lg"
+                      }
+                    },
+                    {
+                      "type": "Icon",
+                      "props": {
+                        "name": "Shield",
+                        "className": "text-yellow-400 w-12 h-12",
+                        "size": "sm"
+                      }
+                    },
+                    {
+                      "type": "TextBlock",
+                      "props": {
+                        "children": "Non-Toxic & Child-Safe",
+                        "className": "text-lg font-medium text-gray-800",
+                        "size": "lg"
+                      }
+                    },
+                    {
+                      "type": "Icon",
+                      "props": {
+                        "name": "Checkmark",
+                        "className": "text-yellow-400 w-12 h-12",
+                        "size": "sm"
+                      }
+                    },
+                    {
+                      "type": "TextBlock",
+                      "props": {
+                        "children": "Certified Safe for Ages 3+",
+                        "className": "text-lg font-medium text-gray-800",
+                        "size": "lg"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "CTASection",
+              "props": {
+                "title": "Ready to Spark Your Child's Imagination?",
+                "description": "Join thousands of parents who've discovered the magic of play-based learning",
+                "primaryButton": "Shop Now",
+                "secondaryButton": "Watch Video",
+                "className": "bg-gradient-to-r from-pink-100 to-yellow-100 py-16",
+                "textColor": "indigo",
+                "align": "center"
+              }
             }
           ]
         },
         {
-          "type": "Section",
+          "type": "Footer",
           "props": {
-            "className": "py-16 bg-gray-50"
-          },
-          "children": [
-            {
-              "type": "Heading",
-              "props": {
-                "children": "Why Choose Our Watches",
-                "level": 3,
-                "className": "text-3xl font-bold text-center text-indigo-800 mb-12"
+            "className": "text-center py-8 text-gray-600",
+            "logo": "MyBrand",
+            "copyright": "\u00a9 2023 MyBrand. All rights reserved.",
+            "sections": [
+              {
+                "label": "Products",
+                "items": [
+                  {
+                    "label": "Toys",
+                    "href": "/toys"
+                  },
+                  {
+                    "label": "Games",
+                    "href": "/games"
+                  },
+                  {
+                    "label": "STEM Kits",
+                    "href": "/stem"
+                  }
+                ]
               }
-            },
-            {
-              "type": "FlexColumn",
-              "props": {
-                "align": "center",
-                "justify": "center",
-                "gap": 8
+            ],
+            "socialLinks": [
+              {
+                "label": "Instagram",
+                "href": "https://instagram.com/mybrand",
+                "icon": "InstagramIcon"
               },
-              "children": [
-                {
-                  "type": "StatsCard",
-                  "props": {
-                    "title": "Craftsmanship",
-                    "value": "100%",
-                    "icon": "Craft",
-                    "change": "+15%",
-                    "description": "Hand-assembled by master watchmakers",
-                    "className": "bg-white p-6 rounded-xl shadow-sm"
-                  }
-                },
-                {
-                  "type": "StatsCard",
-                  "props": {
-                    "title": "Materials",
-                    "value": "Premium",
-                    "icon": "Material",
-                    "change": "+20%",
-                    "description": "Sapphire crystal and aerospace-grade titanium",
-                    "className": "bg-white p-6 rounded-xl shadow-sm"
-                  }
-                },
-                {
-                  "type": "StatsCard",
-                  "props": {
-                    "title": "Warranty",
-                    "value": "5 Years",
-                    "icon": "Shield",
-                    "change": "Included",
-                    "description": "Comprehensive coverage for peace of mind",
-                    "className": "bg-white p-6 rounded-xl shadow-sm"
-                  }
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "Section",
-          "props": {
-            "className": "py-20 border-t border-gray-200"
-          },
-          "children": [
-            {
-              "type": "Heading",
-              "props": {
-                "children": "Join 10,000+ Happy Collectors",
-                "level": 3,
-                "className": "text-3xl font-bold text-center text-indigo-800 mb-8"
-              }
-            },
-            {
-              "type": "TextBlock",
-              "props": {
-                "children": "Experience the perfect blend of tradition and innovation in watchmaking.",
-                "className": "text-center text-gray-600 text-lg max-w-3xl mx-auto"
-              }
-            },
-            {
-              "type": "FlexRow",
-              "props": {
-                "justify": "center",
-                "gap": 4
+              {
+                "label": "YouTube",
+                "href": "https://youtube.com/mybrand",
+                "icon": "YouTubeIcon"
               },
-              "children": [
-                {
-                  "type": "Badge",
-                  "props": {
-                    "children": "Free Shipping",
-                    "variant": "solid",
-                    "size": "md",
-                    "rounded": "md",
-                    "className": "bg-green-100 text-green-700 px-4 py-2"
-                  }
-                },
-                {
-                  "type": "Badge",
-                  "props": {
-                    "children": "Secure Checkout",
-                    "variant": "solid",
-                    "size": "md",
-                    "rounded": "md",
-                    "className": "bg-blue-100 text-blue-700 px-4 py-2"
-                  }
-                },
-                {
-                  "type": "Badge",
-                  "props": {
-                    "children": "Easy Returns",
-                    "variant": "solid",
-                    "size": "md",
-                    "rounded": "md",
-                    "className": "bg-purple-100 text-purple-700 px-4 py-2"
-                  }
-                }
-              ]
-            }
-          ]
+              {
+                "label": "Pinterest",
+                "href": "https://pinterest.com/mybrand",
+                "icon": "PinterestIcon"
+              }
+            ]
+          }
         }
       ]
     }

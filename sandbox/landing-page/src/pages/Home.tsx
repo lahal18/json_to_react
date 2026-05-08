@@ -1,0 +1,107 @@
+
+import React from "react"
+import { Badge, CTASection, Card, FlexColumn, Grid, Heading, Hero, Icon, Image, Section, TextBlock } from "../components"
+
+export default function Home() {
+  return (
+    <div>
+      <div data-component-path="src/components/Hero/Hero.tsx" style={{ display: "contents" }}>
+        <Hero title={"Welcome to Playtime Paradise"} subtitle={"Endless fun and learning for curious kids"} className={"text-center text-indigo-800 bg-gradient-to-r from-pink-500 to-yellow-500 text-white"} background={"https://placehold.co/1200x600/f3f4f6/6b7280?text=Playtime+Paradise"} textAlign={"center"} size={"xl"} />
+      </div>
+      <div data-component-path="src/components/Layout/Section.tsx" style={{ display: "contents" }}>
+        <Section padding={8} backgroundColor={"white"}>
+        <div data-component-path="src/components/ContentDisplay/Heading.tsx" style={{ display: "contents" }}>
+          <Heading children={"Explore Our Toy Collection"} level={2} className={"text-3xl font-bold text-indigo-700 mb-4"} color={"indigo"} align={"center"} />
+        </div>
+        <div data-component-path="src/components/Layout/Grid.tsx" style={{ display: "contents" }}>
+          <Grid cols={3} gap={6} className={"grid gap-4"}>
+          <div data-component-path="src/components/Layout/Card.tsx" style={{ display: "contents" }}>
+            <Card className={"bg-pink-50 rounded-lg shadow-md hover:shadow-xl transition-shadow"} rounded={"lg"} shadow={"md"}>
+            <div data-component-path="src/components/ContentDisplay/Image.tsx" style={{ display: "contents" }}>
+              <Image src={"https://placehold.co/300x200/e2e8f0/6b7280?text=Building+Blocks"} alt={"Building Blocks Set"} className={"rounded-t-lg"} />
+            </div>
+            <div data-component-path="src/components/ContentDisplay/Heading.tsx" style={{ display: "contents" }}>
+              <Heading children={"Building Blocks"} level={3} className={"text-xl font-semibold text-gray-800 py-2"} />
+            </div>
+            <div data-component-path="src/components/ContentDisplay/TextBlock.tsx" style={{ display: "contents" }}>
+              <TextBlock children={"Develop creativity and fine motor skills with our colorful building blocks set. Perfect for ages 3-8!"} className={"text-gray-600 py-2"} size={"sm"} />
+            </div>
+            <div data-component-path="src/components/ContentDisplay/Badge.tsx" style={{ display: "contents" }}>
+              <Badge children={"Ages 3+"} variant={"secondary"} size={"sm"} />
+            </div>
+            </Card>
+          </div>
+          <div data-component-path="src/components/Layout/Card.tsx" style={{ display: "contents" }}>
+            <Card className={"bg-blue-50 rounded-lg shadow-md hover:shadow-xl transition-shadow"} rounded={"lg"} shadow={"md"}>
+            <div data-component-path="src/components/ContentDisplay/Image.tsx" style={{ display: "contents" }}>
+              <Image src={"https://placehold.co/300x200/e2e8f0/6b7280?text=Stuffed+Animals"} alt={"Stuffed Animals Collection"} className={"rounded-t-lg"} />
+            </div>
+            <div data-component-path="src/components/ContentDisplay/Heading.tsx" style={{ display: "contents" }}>
+              <Heading children={"Stuffed Animals"} level={3} className={"text-xl font-semibold text-gray-800 py-2"} />
+            </div>
+            <div data-component-path="src/components/ContentDisplay/TextBlock.tsx" style={{ display: "contents" }}>
+              <TextBlock children={"Soft, cuddly companions that become best friends for bedtime and playtime adventures."} className={"text-gray-600 py-2"} size={"sm"} />
+            </div>
+            <div data-component-path="src/components/ContentDisplay/Badge.tsx" style={{ display: "contents" }}>
+              <Badge children={"Premium Quality"} variant={"secondary"} size={"sm"} />
+            </div>
+            </Card>
+          </div>
+          <div data-component-path="src/components/Layout/Card.tsx" style={{ display: "contents" }}>
+            <Card className={"bg-green-50 rounded-lg shadow-md hover:shadow-xl transition-shadow"} rounded={"lg"} shadow={"md"}>
+            <div data-component-path="src/components/ContentDisplay/Image.tsx" style={{ display: "contents" }}>
+              <Image src={"https://placehold.co/300x200/e2e8f0/6b7280?text=STEM+Kits"} alt={"STEM Learning Kits"} className={"rounded-t-lg"} />
+            </div>
+            <div data-component-path="src/components/ContentDisplay/Heading.tsx" style={{ display: "contents" }}>
+              <Heading children={"STEM Learning Kits"} level={3} className={"text-xl font-semibold text-gray-800 py-2"} />
+            </div>
+            <div data-component-path="src/components/ContentDisplay/TextBlock.tsx" style={{ display: "contents" }}>
+              <TextBlock children={"Hands-on science experiments that spark curiosity and make learning magical."} className={"text-gray-600 py-2"} size={"sm"} />
+            </div>
+            <div data-component-path="src/components/ContentDisplay/Badge.tsx" style={{ display: "contents" }}>
+              <Badge children={"Eco-Friendly"} variant={"secondary"} size={"sm"} />
+            </div>
+            </Card>
+          </div>
+          </Grid>
+        </div>
+        <div data-component-path="src/components/Layout/Section.tsx" style={{ display: "contents" }}>
+          <Section padding={12} backgroundColor={"yellow-50"}>
+          <div data-component-path="src/components/ContentDisplay/Heading.tsx" style={{ display: "contents" }}>
+            <Heading children={"Why Parents Love Playtime Paradise"} level={2} className={"text-2xl font-bold text-indigo-700 mb-3 text-center"} color={"indigo"} align={"center"} />
+          </div>
+          <div data-component-path="src/components/Layout/FlexColumn.tsx" style={{ display: "contents" }}>
+            <FlexColumn className={"max-w-3xl mx-auto space-y-4"} align={"center"} justify={"center"}>
+            <div data-component-path="src/components/ContentDisplay/Icon.tsx" style={{ display: "contents" }}>
+              <Icon name={"Star"} className={"text-yellow-400 w-12 h-12"} size={"sm"} />
+            </div>
+            <div data-component-path="src/components/ContentDisplay/TextBlock.tsx" style={{ display: "contents" }}>
+              <TextBlock children={"Safe Materials"} className={"text-lg font-medium text-gray-800"} size={"lg"} />
+            </div>
+            <div data-component-path="src/components/ContentDisplay/Icon.tsx" style={{ display: "contents" }}>
+              <Icon name={"Shield"} className={"text-yellow-400 w-12 h-12"} size={"sm"} />
+            </div>
+            <div data-component-path="src/components/ContentDisplay/TextBlock.tsx" style={{ display: "contents" }}>
+              <TextBlock children={"Non-Toxic & Child-Safe"} className={"text-lg font-medium text-gray-800"} size={"lg"} />
+            </div>
+            <div data-component-path="src/components/ContentDisplay/Icon.tsx" style={{ display: "contents" }}>
+              <Icon name={"Checkmark"} className={"text-yellow-400 w-12 h-12"} size={"sm"} />
+            </div>
+            <div data-component-path="src/components/ContentDisplay/TextBlock.tsx" style={{ display: "contents" }}>
+              <TextBlock children={"Certified Safe for Ages 3+"} className={"text-lg font-medium text-gray-800"} size={"lg"} />
+            </div>
+            </FlexColumn>
+          </div>
+          </Section>
+        </div>
+        <div data-component-path="src/components/Marketing/CTASection.tsx" style={{ display: "contents" }}>
+          <CTASection title={"Ready to Spark Your Child's Imagination?"} description={"Join thousands of parents who've discovered the magic of play-based learning"} primaryButton={"Shop Now"} secondaryButton={"Watch Video"} className={"bg-gradient-to-r from-pink-100 to-yellow-100 py-16"} textColor={"indigo"} align={"center"} />
+        </div>
+        </Section>
+      </div>
+      <div data-component-path="src/components/Navigation/Footer.tsx" style={{ display: "contents" }}>
+        <Footer className={"text-center py-8 text-gray-600"} logo={"MyBrand"} copyright={"\u00a9 2023 MyBrand. All rights reserved."} sections={[{"label": "Products", "items": [{"label": "Toys", "href": "/toys"}, {"label": "Games", "href": "/games"}, {"label": "STEM Kits", "href": "/stem"}]}]} socialLinks={[{"label": "Instagram", "href": "https://instagram.com/mybrand", "icon": "InstagramIcon"}, {"label": "YouTube", "href": "https://youtube.com/mybrand", "icon": "YouTubeIcon"}, {"label": "Pinterest", "href": "https://pinterest.com/mybrand", "icon": "PinterestIcon"}]} />
+      </div>
+    </div>
+  )
+}
